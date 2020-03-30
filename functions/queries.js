@@ -7,8 +7,10 @@ const pool = new Pool({
   port: 5432,
 })
 
-const getUsers = (request, response) => {
-  pool.query('SELECT * FROM users ORDER BY id ASC', (error, results) => {
+const getUserById = (request, response) => {
+  const {id} = request.body;
+  const statement = `SELECT * FROM users WHERE user_id = '${id}' `
+  pool.query(statement, (error, results) => {
     if (error) {
       throw error
     }
@@ -16,10 +18,8 @@ const getUsers = (request, response) => {
   })
 }
 
-const getUserById = (request, response) => {
-  const id = parseInt(request.params.id)
-
-  pool.query('SELECT * FROM users WHERE id = $1', [id], (error, results) => {
+const getUsers = (request, response) => {
+  pool.query('SELECT * FROM users', (error, results) => {
     if (error) {
       throw error
     }
@@ -28,13 +28,14 @@ const getUserById = (request, response) => {
 }
 
 const createUser = (request, response) => {
-  const { name, email } = request.body
+  const {id, name, email, service, image} = request.body
 
-  pool.query('INSERT INTO users (name, email) VALUES ($1, $2)', [name, email], (error, results) => {
+
+  pool.query('INSERT INTO users (user_id, name, email, service, image) VALUES ($1, $2, $3, $4, $5)', [id, name, email, service, image], (error, results) => {
     if (error) {
       throw error
     }
-    response.status(201).send(`User added with ID: ${result.insertId}`)
+    response.status(201).send(`User added with data: ${id, name, email, service, image}`)
   })
 }
 
@@ -54,21 +55,10 @@ const updateUser = (request, response) => {
   )
 }
 
-const deleteUser = (request, response) => {
-  const id = parseInt(request.params.id)
-
-  pool.query('DELETE FROM users WHERE id = $1', [id], (error, results) => {
-    if (error) {
-      throw error
-    }
-    response.status(200).send(`User deleted with ID: ${id}`)
-  })
-}
 
 module.exports = {
-  getUsers,
   getUserById,
   createUser,
   updateUser,
-  deleteUser,
+  getUsers
 }

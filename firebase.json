@@ -8,7 +8,11 @@
     ],
     "rewrites": [
       {
-        "source": "/prueba",
+        "source": "/users",
+        "function": "app"
+      },
+      {
+        "source": "/allusers",
         "function": "app"
       }
     ]
