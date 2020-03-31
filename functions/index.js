@@ -3,21 +3,14 @@ const functions = require('firebase-functions');
 const express = require('express')
 const bodyParser = require('body-parser')
 const app = express()
-const db = require('./queries')
+const dbu = require('./users')
+const dbr = require('./restaurants')
 
-
-/*app.get('/prueba', (request, response) => {
-    pool.query('SELECT * FROM users', (error, results) => {
-        if (error) {
-          throw error
-        }
-        response.status(200).json(results.rows)
-      })
-  })*/
-
-app.get('/users', db.getUserById)
-app.get('/allusers', db.getUsers)
-app.post('/users', db.createUser)
-app.put('/users/:id', db.updateUser)
+app.get('/users', dbu.getUserById)
+app.get('/allusers', dbu.getUsers)
+app.get('/allrestaurants', dbr.getRestaurants)
+app.post('/users', dbu.createUser)
+app.post('/restaurants', dbr.createRestaurant)
+app.put('/users', dbu.updateUser)
 
 exports.app = functions.https.onRequest(app);

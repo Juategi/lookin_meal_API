@@ -14,6 +14,14 @@
       {
         "source": "/allusers",
         "function": "app"
+      },
+      {
+        "source": "/restaurants",
+        "function": "app"
+      },
+      {
+        "source": "/allrestaurants",
+        "function": "app"
       }
     ]
   }

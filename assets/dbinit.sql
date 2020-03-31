@@ -13,3 +13,6 @@ create table owner(user_id varchar(50)  NOT NULL, restaurant_id integer NOT NULL
 create table rating(user_id varchar(50)  NOT NULL, entry_id integer NOT NULL, rating real not null, PRIMARY KEY (user_id, entry_id), CONSTRAINT rating_menuentry_fkey FOREIGN KEY (entry_id) REFERENCES menuentry (entry_id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE, CONSTRAINT rating_users_fkey FOREIGN KEY (user_id) REFERENCES users (user_id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE); 
 
 commit;
+
+curl http://localhost:5000/users -X POST -d "id=11a" -d "name=Elaine" -d "email=elaine@example.com" -d "service=GM" -d "image=myimage" 
+curl -X GET http://localhost:5000/users -d "id=1"
