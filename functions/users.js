@@ -63,7 +63,7 @@ const getUserFavorites = (request, response) => {
       if (error) {
         throw error
       }
-      response.status(201).send(`User added with data: ${id, name, email, image}`)
+      response.status(200).json(results.rows)
     }
   )
 }
@@ -78,7 +78,7 @@ const addToUserFavorites = (request, response) => {
       if (error) {
         throw error
       }
-      response.status(201).send(`User added with data: ${id, name, email, image}`)
+      response.status(201).send(`restaurant added with id: ${restaurant_id}`)
     }
   )
 }
@@ -92,7 +92,7 @@ const deleteFromUserFavorites = (request, response) => {
       if (error) {
         throw error
       }
-      response.status(201).send(`User added with data: ${id, name, email, image}`)
+      response.status(201).send(`restaurant deleted from favs with id: ${restaurant_id}`)
     }
   )
 }
