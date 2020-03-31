@@ -12,6 +12,10 @@
         "function": "app"
       },
       {
+        "source": "/userfavs",
+        "function": "app"
+      },
+      {
         "source": "/allusers",
         "function": "app"
       },

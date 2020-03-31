@@ -58,7 +58,7 @@ const getUserFavorites = (request, response) => {
   const {user_id} = request.body
 
   pool.query(
-    `SELECT * FROM favorite WHERE user_id = $1`,[user_id],
+    `SELECT * FROM restaurant WHERE favorite.user_id = $1 and restaurant.restauran_id = favorite.restaurant_id`,[user_id],
     (error, results) => {
       if (error) {
         throw error

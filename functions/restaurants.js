@@ -9,13 +9,13 @@ const pool = new Pool({
 
 
 const createRestaurant = (request, response) => {
-    const {id, name, phone, website, webUrl, address, email, city, country, latitude, longitude,rating, numberViews, images, types, schedule} = request.body
-    pool.query('INSERT INTO restaurant (restaurant_id, name, phone, website, webUrl, address, email, city, country, latitude, longitude,rating, numberViews, images, types, schedule) VALUES ($1, $2, $3, $4, $5)',
-     [id, name, phone, website, webUrl, address, email, city, country, latitude, longitude,rating, numberViews, images, types, schedule], (error, results) => {
+    const {taid, name, phone, website, webUrl, address, email, city, country, latitude, longitude,rating, numrevta, images, types, schedule, sections, currency} = request.body
+    pool.query('INSERT INTO restaurant (ta_id, name, phone, website, webUrl, address, email, city, country, latitude, longitude, rating, numrevta, images, types, schedule, sections, currency) VALUES ($1, $2, $3, $4, $5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18)',
+     [taid, name, phone, website, webUrl, address, email, city, country, latitude, longitude,rating, numrevta, images, types, schedule, sections, currency], (error, results) => {
       if (error) {
         throw error
       }
-      response.status(201).send(`Restaurant added with data: ${id, name, phone, website, webUrl, address, email, city, country, latitude, longitude,rating, numberViews, images, types, schedule}`)
+      response.status(201).send(`Restaurant added with data: ${taid, name, phone, website, webUrl, address, email, city, country, latitude, longitude,rating, numrevta, images, types, schedule}`)
     })
   }
 
