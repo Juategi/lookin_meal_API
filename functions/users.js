@@ -1,14 +1,14 @@
 const Pool = require('pg').Pool
 const pool = new Pool({
   user: 'postgres',
-  host: '104.155.57.239',
+  host: '/cloudsql/lookinmeal-dcf41:europe-west1:lookinmeal',
   database: 'postgres',
   password: 'qHeNfB1d5jNOrf8o',
   port: 5432,
 })
 
 const getUserById = (request, response) => {
-  const {id} = request.body;
+  const {id} = request.headers;
   const statement = `SELECT * FROM users WHERE user_id = $1 `
   pool.query(statement,[id], (error, results) => {
     if (error) {
@@ -35,7 +35,7 @@ const createUser = (request, response) => {
     if (error) {
       throw error
     }
-    response.status(201).send(`User added with data: ${id, name, email, service, image}`)
+    response.status(201).send(`User added with id: ${id}`)
   })
 }
 
@@ -49,13 +49,13 @@ const updateUser = (request, response) => {
       if (error) {
         throw error
       }
-      response.status(201).send(`User added with data: ${id, name, email, image}`)
+      response.status(201).send(`User added with id: ${id}`)
     }
   )
 }
 
 const getUserFavorites = (request, response) => {
-  const {user_id} = request.body
+  const {id} = request.headers;
 
   pool.query(
     `SELECT * FROM restaurant WHERE favorite.user_id = $1 and restaurant.restauran_id = favorite.restaurant_id`,[user_id],

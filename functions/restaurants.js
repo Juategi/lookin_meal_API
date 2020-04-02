@@ -1,7 +1,7 @@
 const Pool = require('pg').Pool
 const pool = new Pool({
   user: 'postgres',
-  host: '104.155.57.239',
+  host: '/cloudsql/lookinmeal-dcf41:europe-west1:lookinmeal',
   database: 'postgres',
   password: 'qHeNfB1d5jNOrf8o',
   port: 5432,
@@ -15,7 +15,7 @@ const createRestaurant = (request, response) => {
       if (error) {
         throw error
       }
-      response.status(201).send(`Restaurant added with data: ${taid, name, phone, website, webUrl, address, email, city, country, latitude, longitude,rating, numrevta, images, types, schedule}`)
+      response.status(201).send(`Restaurant added with name: ${name}`)
     })
   }
 
