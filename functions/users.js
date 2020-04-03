@@ -56,7 +56,7 @@ const getUserFavorites = (request, response) => {
   const {id} = request.headers;
 
   pool.query(
-    `SELECT * FROM restaurant WHERE favorite.user_id = $1 and restaurant.restauran_id = favorite.restaurant_id`,[user_id],
+    `SELECT * FROM restaurant r LEFT JOIN favorite f ON r.restaurant_id = f.restaurant_id WHERE f.user_id = $1 `,[id],
     (error, results) => {
       if (error) {
         throw error
