@@ -29,8 +29,6 @@ const getUsers = (request, response) => {
 
 const createUser = (request, response) => {
   const {id, name, email, service, image} = request.body
-
-
   pool.query('INSERT INTO users (user_id, name, email, service, image) VALUES ($1, $2, $3, $4, $5)', [id, name, email, service, image], (error, results) => {
     if (error) {
       throw error
@@ -84,7 +82,7 @@ const addToUserFavorites = (request, response) => {
 }
 
 const deleteFromUserFavorites = (request, response) => {
-  const {user_id, restaurant_id} = request.body
+  const {user_id, restaurant_id} = request.headers
 
   pool.query(
     `DELETE FROM favorite WHERE user_id = $1, restaurant_id = $2`,[user_id, restaurant_id],
