@@ -38,11 +38,11 @@ const createUser = (request, response) => {
 }
 
 const updateUser = (request, response) => {
-  const {id, name, email, image} = request.body
+  const {id, name, email, image, service} = request.body
 
   pool.query(
-    'UPDATE users SET name = $1, email = $2, image = $3 WHERE user_id = $3',
-    [name, email, image, id],
+    'UPDATE users SET name = $1, email = $2, image = $3, service = $4 WHERE user_id = $5',
+    [name, email, image, service, id],
     (error, results) => {
       if (error) {
         throw error
@@ -76,7 +76,7 @@ const addToUserFavorites = (request, response) => {
       if (error) {
         throw error
       }
-      response.status(201).send(`restaurant added with id: ${restaurant_id}`)
+      response.status(201).send(`restaurant added in favs with id: ${restaurant_id}`)
     }
   )
 }
