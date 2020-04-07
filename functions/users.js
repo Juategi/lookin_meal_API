@@ -85,7 +85,7 @@ const deleteFromUserFavorites = (request, response) => {
   const {user_id, restaurant_id} = request.headers
 
   pool.query(
-    `DELETE FROM favorite WHERE user_id = $1, restaurant_id = $2`,[user_id, restaurant_id],
+    `DELETE FROM favorite WHERE user_id = $1 AND restaurant_id = $2`,[user_id, restaurant_id],
     (error, results) => {
       if (error) {
         throw error
