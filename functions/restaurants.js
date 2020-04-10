@@ -28,7 +28,35 @@ const createRestaurant = (request, response) => {
     })
   }
 
+  const addMenuEntry = (request, response) => {
+    const {restaurant_id, name, section, rating, numReviews, price} = request.body
+    pool.query('INSERT INTO menuentry (entry_id, restaurant_id, name, section, rating, numReviews, price) VALUES ($1, $2, $3, $4, $5, $6)',
+     [restaurant_id, name, section, rating, numReviews, price], (error, results) => {
+      if (error) {
+        throw error
+      }
+      response.status(201).send(`Menu entry added with name: ${name}`)
+    })
+  }
+
+  const getMenu = (request, response) => {
+    const {restaurant_id} = request.headers;
+
+    pool.query(
+      `SELECT * FROM menuentry WHERE restaurant_id = $1 `,[id],
+      (error, results) => {
+        if (error) {
+          throw error
+        }
+        response.status(200).json(results.rows)
+      }
+    )
+  }
+
   module.exports = {
     createRestaurant,
-    getRestaurants
+    getRestaurants,
+    addMenuEntry,
+    getMenu
   }
+
