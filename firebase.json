@@ -26,6 +26,10 @@
       {
         "source": "/allrestaurants",
         "function": "app"
+      },
+      {
+        "source": "/menus",
+        "function": "app"
       }
     ]
   }

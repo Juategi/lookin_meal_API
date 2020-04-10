@@ -30,7 +30,7 @@ const createRestaurant = (request, response) => {
 
   const addMenuEntry = (request, response) => {
     const {restaurant_id, name, section, rating, numReviews, price} = request.body
-    pool.query('INSERT INTO menuentry (entry_id, restaurant_id, name, section, rating, numReviews, price) VALUES ($1, $2, $3, $4, $5, $6)',
+    pool.query('INSERT INTO menuentry (restaurant_id, name, section, rating, numreviews, price) VALUES ($1, $2, $3, $4, $5, $6)',
      [restaurant_id, name, section, rating, numReviews, price], (error, results) => {
       if (error) {
         throw error
