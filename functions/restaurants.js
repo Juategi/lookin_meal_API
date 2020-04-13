@@ -53,10 +53,38 @@ const createRestaurant = (request, response) => {
     )
   }
 
+
+  const addSection = (request, response) => {
+    const {restaurant_id, sections} = request.body
+    pool.query('UPDATE restaurant SET sections = $2 WHERE restaurant_id = $1',
+     [restaurant_id, sections], (error, results) => {
+      if (error) {
+        throw error
+      }
+      response.status(201).send(`Section added in: ${restaurant_id}`)
+    })
+  }
+
+  const getSections = (request, response) => {
+    const {restaurant_id} = request.headers;
+
+    pool.query(
+      `SELECT sections FROM restaurant WHERE restaurant_id = $1 `,[id],
+      (error, results) => {
+        if (error) {
+          throw error
+        }
+        response.status(200).json(results.rows)
+      }
+    )
+  }
+
   module.exports = {
     createRestaurant,
     getRestaurants,
     addMenuEntry,
-    getMenu
+    getMenu,
+    addSection,
+    getSections
   }
 
