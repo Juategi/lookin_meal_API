@@ -43,7 +43,7 @@ const createRestaurant = (request, response) => {
     const {restaurant_id} = request.headers;
 
     pool.query(
-      `SELECT * FROM menuentry WHERE restaurant_id = $1 `,[id],
+      `SELECT * FROM menuentry WHERE restaurant_id = $1 `,[restaurant_id],
       (error, results) => {
         if (error) {
           throw error
@@ -69,7 +69,7 @@ const createRestaurant = (request, response) => {
     const {restaurant_id} = request.headers;
 
     pool.query(
-      `SELECT sections FROM restaurant WHERE restaurant_id = $1 `,[id],
+      `SELECT sections FROM restaurant WHERE restaurant_id = $1 `,[restaurant_id],
       (error, results) => {
         if (error) {
           throw error
