@@ -56,7 +56,7 @@ const createRestaurant = (request, response) => {
 
   const addSection = (request, response) => {
     const {restaurant_id, sections} = request.body
-    pool.query('UPDATE restaurant SET sections = $2 WHERE restaurant_id = $1',
+    pool.query('UPDATE restaurant SET sections = sections || ARRAY[$2] WHERE restaurant_id = $1',
      [restaurant_id, sections], (error, results) => {
       if (error) {
         throw error
