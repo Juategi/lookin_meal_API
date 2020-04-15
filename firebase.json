@@ -34,6 +34,14 @@
       {
         "source": "/sections",
         "function": "app"
+      },
+      {
+        "source": "/rating",
+        "function": "app"
+      },
+      {
+        "source": "/allrating",
+        "function": "app"
       }
     ]
   }

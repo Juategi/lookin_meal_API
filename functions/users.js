@@ -95,6 +95,49 @@ const deleteFromUserFavorites = (request, response) => {
   )
 }
 
+const addRate = (request, response) => {
+  const {user_id, entry_id, rating} = request.body
+
+  pool.query(
+    'INSERT INTO rating (user_id, restaurant_id, rating) VALUES ($1, $2, $3)',
+    [user_id, entry_id, rating],
+    (error, results) => {
+      if (error) {
+        throw error
+      }
+      response.status(201).send(`rated with: ${rating}`)
+    }
+  )
+}
+
+const getRating = (request, response) => {
+  const {user_id, entry_id} = request.headers;
+
+  pool.query(
+    `SELECT rating FROM rating WHERE user_id = $1 and entry_id = $2 `,[user_id, entry_id],
+    (error, results) => {
+      if (error) {
+        throw error
+      }
+      response.status(200).json(results.rows)
+    }
+  )
+}
+
+const getAllRatings = (request, response) => {
+  const {user_id} = request.headers;
+
+  pool.query(
+    `SELECT * FROM rating WHERE user_id = $1`,[user_id],
+    (error, results) => {
+      if (error) {
+        throw error
+      }
+      response.status(200).json(results.rows)
+    }
+  )
+}
+
 module.exports = {
   getUserById,
   createUser,
@@ -102,5 +145,8 @@ module.exports = {
   getUsers,
   getUserFavorites,
   addToUserFavorites,
-  deleteFromUserFavorites
+  deleteFromUserFavorites,
+  addRate,
+  getRating,
+  getAllRatings
 }
