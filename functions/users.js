@@ -99,7 +99,7 @@ const addRate = (request, response) => {
   const {user_id, entry_id, rating} = request.body
 
   pool.query(
-    'INSERT INTO rating (user_id, restaurant_id, rating) VALUES ($1, $2, $3)',
+    'INSERT INTO rating (user_id, entry_id, rating) VALUES ($1, $2, $3)',
     [user_id, entry_id, rating],
     (error, results) => {
       if (error) {
@@ -120,6 +120,20 @@ const getRating = (request, response) => {
         throw error
       }
       response.status(200).json(results.rows)
+    }
+  )
+}
+
+const deleteRating = (request, response) => {
+  const {user_id, entry_id} = request.headers
+
+  pool.query(
+    `DELETE FROM rating WHERE user_id = $1 AND entry_id = $2`,[user_id, entry_id],
+    (error, results) => {
+      if (error) {
+        throw error
+      }
+      response.status(201).send(`rating deleted with entry id: ${entry_id}`)
     }
   )
 }
@@ -148,5 +162,6 @@ module.exports = {
   deleteFromUserFavorites,
   addRate,
   getRating,
-  getAllRatings
+  getAllRatings,
+  deleteRating
 }

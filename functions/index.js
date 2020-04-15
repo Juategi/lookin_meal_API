@@ -23,5 +23,6 @@ app.post('/sections', dbr.addSection)
 app.post('/rating', dbu.addRate)
 app.put('/users', dbu.updateUser)
 app.delete('/userfavs', dbu.deleteFromUserFavorites)
+app.delete('rating', dbu.deleteRating)
 
 exports.app = functions.https.onRequest(app);
