@@ -142,7 +142,7 @@ const getAllRatings = (request, response) => {
   const {user_id} = request.headers;
 
   pool.query(
-    `SELECT * FROM rating WHERE user_id = $1`,[user_id],
+    `SELECT rating,entry_id FROM rating WHERE user_id = $1`,[user_id],
     (error, results) => {
       if (error) {
         throw error
