@@ -96,11 +96,11 @@ const deleteFromUserFavorites = (request, response) => {
 }
 
 const addRate = (request, response) => {
-  const {user_id, entry_id, rating} = request.body
+  const {user_id, entry_id, rating, ratedate} = request.body
 
   pool.query(
-    'INSERT INTO rating (user_id, entry_id, rating, ratedate) VALUES ($1, $2, $3, CURRENT_DATE)',
-    [user_id, entry_id, rating],
+    'INSERT INTO rating (user_id, entry_id, rating, ratedate) VALUES ($1, $2, $3, $4)',
+    [user_id, entry_id, rating, ratedate],
     (error, results) => {
       if (error) {
         throw error
