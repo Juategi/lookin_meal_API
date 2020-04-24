@@ -29,8 +29,8 @@ const createRestaurant = (request, response) => {
   }
 
   const addMenuEntry = (request, response) => {
-    const {restaurant_id, name, section, rating, numReviews, price} = request.body
-    pool.query('INSERT INTO menuentry (restaurant_id, name, section, rating, numreviews, price) VALUES ($1, $2, $3, $4, $5, $6)',
+    const {restaurant_id, name, section, price} = request.body
+    pool.query('INSERT INTO menuentry (restaurant_id, name, section, price) VALUES ($1, $2, $3, $4)',
      [restaurant_id, name, section, rating, numReviews, price], (error, results) => {
       if (error) {
         throw error
@@ -43,7 +43,7 @@ const createRestaurant = (request, response) => {
     const {restaurant_id} = request.headers;
 
     pool.query(
-      `SELECT * FROM menuentry WHERE restaurant_id = $1 `,[restaurant_id],
+      `SELECT m.*, AVG(r.rating) as rating, COUNT(r) as numreviews FROM menuentry m left join rating r on m.entry_id=r.entry_id WHERE m.restaurant_id = $1 group by m.entry_id; `,[restaurant_id],
       (error, results) => {
         if (error) {
           throw error

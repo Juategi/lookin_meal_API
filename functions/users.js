@@ -99,7 +99,7 @@ const addRate = (request, response) => {
   const {user_id, entry_id, rating} = request.body
 
   pool.query(
-    'INSERT INTO rating (user_id, entry_id, rating) VALUES ($1, $2, $3)',
+    'INSERT INTO rating (user_id, entry_id, rating, ratedate) VALUES ($1, $2, $3, CURRENT_DATE)',
     [user_id, entry_id, rating],
     (error, results) => {
       if (error) {
@@ -114,7 +114,7 @@ const getRating = (request, response) => {
   const {user_id, entry_id} = request.headers;
 
   pool.query(
-    `SELECT rating FROM rating WHERE user_id = $1 and entry_id = $2 `,[user_id, entry_id],
+    `SELECT rating,ratedate FROM rating WHERE user_id = $1 and entry_id = $2 `,[user_id, entry_id],
     (error, results) => {
       if (error) {
         throw error
@@ -142,7 +142,7 @@ const getAllRatings = (request, response) => {
   const {user_id} = request.headers;
 
   pool.query(
-    `SELECT rating,entry_id FROM rating WHERE user_id = $1`,[user_id],
+    `SELECT rating,entry_id,ratedate FROM rating WHERE user_id = $1`,[user_id],
     (error, results) => {
       if (error) {
         throw error
