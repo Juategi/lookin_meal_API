@@ -29,9 +29,9 @@ const createRestaurant = (request, response) => {
   }
 
   const addMenuEntry = (request, response) => {
-    const {restaurant_id, name, section, price} = request.body
-    pool.query('INSERT INTO menuentry (restaurant_id, name, section, price) VALUES ($1, $2, $3, $4)',
-     [restaurant_id, name, section, price], (error, results) => {
+    const {restaurant_id, name, section, price, image} = request.body
+    pool.query('INSERT INTO menuentry (restaurant_id, name, section, price, image) VALUES ($1, $2, $3, $4, $5)',
+     [restaurant_id, name, section, price, image], (error, results) => {
       if (error) {
         throw error
       }
@@ -40,9 +40,9 @@ const createRestaurant = (request, response) => {
   }
 
   const updateMenuEntry = (request, response) => {
-    const {entry_id, name, section, price} = request.body
-    pool.query('UPDATE menuentry SET name = $2, section = $3, price = $4 WHERE entry_id = $1',
-     [entry_id, name, section, price], (error, results) => {
+    const {entry_id, name, section, price, image} = request.body
+    pool.query('UPDATE menuentry SET name = $2, section = $3, price = $4, image = $5 WHERE entry_id = $1',
+     [entry_id, name, section, price, image], (error, results) => {
       if (error) {
         throw error
       }
