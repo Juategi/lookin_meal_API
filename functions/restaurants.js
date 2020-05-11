@@ -41,7 +41,7 @@ const createRestaurant = (request, response) => {
 
   const updateMenuEntry = (request, response) => {
     const {entry_id, name, section, price} = request.body
-    pool.query('UPDATE menuentry SET name = $2, SET section = $3, SET price = $4 WHERE entry_id = $1',
+    pool.query('UPDATE menuentry SET name = $2, section = $3, price = $4 WHERE entry_id = $1',
      [entry_id, name, section, price], (error, results) => {
       if (error) {
         throw error
@@ -76,8 +76,9 @@ const createRestaurant = (request, response) => {
   }
 
   const updateSections = (request, response) => {
-    const {restaurant_id, sections} = request.body
-    pool.query('UPDATE restaurant SET sections = $2 WHERE restaurant_id = $1',
+    var {restaurant_id, sections} = request.body
+    sections = sections.split(', ');
+    pool.query(`UPDATE restaurant SET sections = $2 WHERE restaurant_id = $1`,
      [restaurant_id, sections], (error, results) => {
       if (error) {
         throw error
