@@ -26,5 +26,6 @@ app.put('/menus', dbr.updateMenuEntry)
 app.put('/sections', dbr.updateSections)
 app.delete('/userfavs', dbu.deleteFromUserFavorites)
 app.delete('/rating', dbu.deleteRating)
+app.delete('/menus', dbr.deleteMenuEntry)
 
 exports.app = functions.https.onRequest(app);

@@ -30,12 +30,12 @@ const createRestaurant = (request, response) => {
 
   const addMenuEntry = (request, response) => {
     const {restaurant_id, name, section, price, image} = request.body
-    pool.query('INSERT INTO menuentry (restaurant_id, name, section, price, image) VALUES ($1, $2, $3, $4, $5)',
+    pool.query('INSERT INTO menuentry (restaurant_id, name, section, price, image) VALUES ($1, $2, $3, $4, $5) RETURNING entry_id',
      [restaurant_id, name, section, price, image], (error, results) => {
       if (error) {
         throw error
       }
-      response.status(201).send(`Menu entry added with name: ${name}`)
+      response.status(200).json(results.rows)
     })
   }
 
@@ -48,6 +48,20 @@ const createRestaurant = (request, response) => {
       }
       response.status(201).send(`Menu entry updated with name: ${name}`)
     })
+  }
+
+  const deleteMenuEntry = (request, response) => {
+    const {entry_id} = request.headers
+  
+    pool.query(
+      `DELETE FROM menuentry WHERE entry_id = $1`,[entry_id],
+      (error, results) => {
+        if (error) {
+          throw error
+        }
+        response.status(201).send(`Menu entry deleted with id: ${entry_id}`)
+      }
+    )
   }
 
   const getMenu = (request, response) => {
@@ -109,6 +123,7 @@ const createRestaurant = (request, response) => {
     addSection,
     getSections,
     updateSections,
-    updateMenuEntry
+    updateMenuEntry,
+    deleteMenuEntry
   }
 
