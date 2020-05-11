@@ -22,6 +22,8 @@ app.post('/menus', dbr.addMenuEntry)
 app.post('/sections', dbr.addSection)
 app.post('/rating', dbu.addRate)
 app.put('/users', dbu.updateUser)
+app.put('/menus', dbr.updateMenuEntry)
+app.put('/sections', dbr.updateSections)
 app.delete('/userfavs', dbu.deleteFromUserFavorites)
 app.delete('/rating', dbu.deleteRating)
 

@@ -39,6 +39,17 @@ const createRestaurant = (request, response) => {
     })
   }
 
+  const updateMenuEntry = (request, response) => {
+    const {entry_id, name, section, price} = request.body
+    pool.query('UPDATE menuentry SET name = $2, SET section = $3, SET price = $4 WHERE entry_id = $1',
+     [entry_id, name, section, price], (error, results) => {
+      if (error) {
+        throw error
+      }
+      response.status(201).send(`Menu entry updated with name: ${name}`)
+    })
+  }
+
   const getMenu = (request, response) => {
     const {restaurant_id} = request.headers;
 
@@ -53,7 +64,6 @@ const createRestaurant = (request, response) => {
     )
   }
 
-
   const addSection = (request, response) => {
     const {restaurant_id, sections} = request.body
     pool.query('UPDATE restaurant SET sections = sections || ARRAY[$2] WHERE restaurant_id = $1',
@@ -62,6 +72,17 @@ const createRestaurant = (request, response) => {
         throw error
       }
       response.status(201).send(`Section added in: ${restaurant_id}`)
+    })
+  }
+
+  const updateSections = (request, response) => {
+    const {restaurant_id, sections} = request.body
+    pool.query('UPDATE restaurant SET sections = $2 WHERE restaurant_id = $1',
+     [restaurant_id, sections], (error, results) => {
+      if (error) {
+        throw error
+      }
+      response.status(201).send(`Sections added in: ${restaurant_id}`)
     })
   }
 
@@ -85,6 +106,8 @@ const createRestaurant = (request, response) => {
     addMenuEntry,
     getMenu,
     addSection,
-    getSections
+    getSections,
+    updateSections,
+    updateMenuEntry
   }
 
