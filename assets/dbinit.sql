@@ -19,3 +19,5 @@ CREATE OR REPLACE FUNCTION distance(lat1 FLOAT, lon1 FLOAT, lat2 FLOAT, lon2 FLO
 curl http://localhost:5000/users -X POST -d "id=11a" -d "name=Elaine" -d "email=elaine@example.com" -d "service=GM" -d "image=myimage" 
 curl -X GET http://localhost:5000/users -d "id=1"
 
+select name,latitude,longitude, distance(39.4534311, -0.3741785, latitude, longitude) as dist from restaurant where city ='Valencia' order by dist asc limit 10;
+select *, distance(39.4534311, -0.3741785, latitude, longitude) as dist from restaurant where city ='Valencia' order by dist asc limit 10;

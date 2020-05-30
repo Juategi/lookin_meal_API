@@ -31,7 +31,7 @@ const createRestaurant = (request, response) => {
 
   const getRestaurantsFromDistance = (request, response) => {
     const {latitude, longitude, distance, city} = request.headers;
-    pool.query('select * from restaurant where city = $4 and distance($1, $2, latitude, longitude) < $3',
+    pool.query('select * from restaurant where city=$4 and distance($1, $2, latitude, longitude)<$3',
     [latitude, longitude, distance, city], (error, results) => {
       if (error) {
         throw error
