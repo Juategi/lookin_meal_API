@@ -1,7 +1,8 @@
 const Pool = require('pg').Pool
 const pool = new Pool({
   user: 'postgres',
-  host: '/cloudsql/lookinmeal-dcf41:europe-west1:lookinmeal',
+  host: '79.150.159.105',
+  //host: '/cloudsql/lookinmeal-dcf41:europe-west1:lookinmeal',
   database: 'postgres',
   password: 'qHeNfB1d5jNOrf8o',
   port: 5432,

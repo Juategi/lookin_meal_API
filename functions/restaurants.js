@@ -1,7 +1,8 @@
 const Pool = require('pg').Pool
 const pool = new Pool({
   user: 'postgres',
-  host: '/cloudsql/lookinmeal-dcf41:europe-west1:lookinmeal',
+  host: '79.150.159.105',
+  //host: '/cloudsql/lookinmeal-dcf41:europe-west1:lookinmeal',
   database: 'postgres',
   password: 'qHeNfB1d5jNOrf8o',
   port: 5432,
@@ -20,7 +21,18 @@ const createRestaurant = (request, response) => {
   }
 
   const getRestaurants = (request, response) => {
-    pool.query('SELECT * FROM restaurant', (error, results) => {
+    pool.query('SELECT * FROM restaurant LIMIT 10', (error, results) => {
+      if (error) {
+        throw error
+      }
+      response.status(200).json(results.rows)
+    })
+  }
+
+  const getRestaurantsFromDistance = (request, response) => {
+    const {latitude, longitude, distance, city} = request.headers;
+    pool.query('select * from restaurant where city = $4 and distance($1, $2, latitude, longitude) < $3',
+    [latitude, longitude, distance, city], (error, results) => {
       if (error) {
         throw error
       }
@@ -29,9 +41,9 @@ const createRestaurant = (request, response) => {
   }
 
   const addMenuEntry = (request, response) => {
-    const {restaurant_id, name, section, price, image} = request.body
-    pool.query('INSERT INTO menuentry (restaurant_id, name, section, price, image) VALUES ($1, $2, $3, $4, $5) RETURNING entry_id',
-     [restaurant_id, name, section, price, image], (error, results) => {
+    const {restaurant_id, name, section, price, image, pos} = request.body
+    pool.query('INSERT INTO menuentry (restaurant_id, name, section, price, image, pos) VALUES ($1, $2, $3, $4, $5, $6) RETURNING entry_id',
+     [restaurant_id, name, section, price, image, pos], (error, results) => {
       if (error) {
         throw error
       }
@@ -40,9 +52,9 @@ const createRestaurant = (request, response) => {
   }
 
   const updateMenuEntry = (request, response) => {
-    const {entry_id, name, section, price, image} = request.body
-    pool.query('UPDATE menuentry SET name = $2, section = $3, price = $4, image = $5 WHERE entry_id = $1',
-     [entry_id, name, section, price, image], (error, results) => {
+    const {entry_id, name, section, price, image, pos} = request.body
+    pool.query('UPDATE menuentry SET name = $2, section = $3, price = $4, image = $5, pos = $6 WHERE entry_id = $1',
+     [entry_id, name, section, price, image, pos], (error, results) => {
       if (error) {
         throw error
       }
@@ -124,6 +136,7 @@ const createRestaurant = (request, response) => {
     getSections,
     updateSections,
     updateMenuEntry,
-    deleteMenuEntry
+    deleteMenuEntry,
+    getRestaurantsFromDistance
   }
 
