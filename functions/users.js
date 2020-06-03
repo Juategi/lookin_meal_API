@@ -54,10 +54,10 @@ const updateUser = (request, response) => {
 }
 
 const getUserFavorites = (request, response) => {
-  const {id} = request.headers;
+  const {latitude,longitude,id} = request.headers;
 
   pool.query(
-    `SELECT * FROM restaurant r LEFT JOIN favorite f ON r.restaurant_id = f.restaurant_id WHERE f.user_id = $1 `,[id],
+    `SELECT *,distance($1, $2, latitude, longitude) as distance FROM restaurant r LEFT JOIN favorite f ON r.restaurant_id = f.restaurant_id WHERE f.user_id = $3 `,[latitude,longitude,id],
     (error, results) => {
       if (error) {
         throw error
