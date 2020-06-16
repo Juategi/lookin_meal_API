@@ -6,6 +6,15 @@ const bodyParser = require('body-parser')
 const app = express()
 const dbu = require('./users')
 const dbr = require('./restaurants')
+const dbs = require('./search')
+const port = 3000
+
+app.use(bodyParser.json())
+app.use(
+  bodyParser.urlencoded({
+    extended: true,
+  })
+)
 
 app.get('/users', dbu.getUserById)
 app.get('/allusers', dbu.getUsers)
@@ -16,6 +25,7 @@ app.get('/menus', dbr.getMenu)
 app.get('/rating', dbu.getRating)
 app.get('/allrating', dbu.getAllRatings)
 app.get('/restaurants', dbr.getRestaurantsFromDistance)
+app.get('/search', dbs.query)
 app.post('/users', dbu.createUser)
 app.post('/userfavs', dbu.addToUserFavorites)
 app.post('/restaurants', dbr.createRestaurant)
@@ -29,4 +39,8 @@ app.delete('/userfavs', dbu.deleteFromUserFavorites)
 app.delete('/rating', dbu.deleteRating)
 app.delete('/menus', dbr.deleteMenuEntry)
 
-exports.app = functions.https.onRequest(app);
+//exports.app = functions.https.onRequest(app);
+
+app.listen(port, () => {
+    console.log(`App running on port ${port}.`)
+  })
