@@ -23,4 +23,4 @@ select name,latitude,longitude, distance(39.4534311, -0.3741785, latitude, longi
 select *, distance(39.4534311, -0.3741785, latitude, longitude) as dist from restaurant where city ='Valencia' order by dist asc limit 10;
 
 
-ALTER TABLE users ADD CONSTRAINT uniqueemail UNIQUE (email);
+select array_agg(c) as alltypes from (select distinct unnest(types) from restaurant) as dt(c);
