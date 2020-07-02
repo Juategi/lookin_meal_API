@@ -1,13 +1,4 @@
-const Pool = require('pg').Pool
-const pool = new Pool({
-  user: 'postgres',
-  host: 'localhost',
-  //host: '/cloudsql/lookinmeal-dcf41:europe-west1:lookinmeal',
-  database: 'postgres',
-  password: 'qHeNfB1d5jNOrf8o',
-  port: 5432,
-})
-
+const pool = require("./mypool").pool
 
 const createRestaurant = (request, response) => {
     const {taid, name, phone, website, webUrl, address, email, city, country, latitude, longitude,rating, numrevta, images, types, schedule, sections, currency} = request.body
@@ -127,6 +118,28 @@ const createRestaurant = (request, response) => {
     )
   }
 
+  const updateImages = (request, response) => {
+    const {id,images} = request.body
+    pool.query('UPDATE restaurant SET images = $2 WHERE restaurant_id = $1',
+     [id,images], (error, results) => {
+      if (error) {
+        throw error
+      }
+      response.status(201).send(`Images updated from restaurant: ${id}`)
+    })
+  }
+
+  const updateRestaurantData = (request, response) => {
+    const {id,name,phone,website,address,types,schedule} = request.body
+    pool.query('UPDATE restaurant SET name = $2, phone = $3, website = $4, address = $5, types = $6, schedule = $7 WHERE restaurant_id = $1',
+     [id,name,phone,website,address,types,schedule], (error, results) => {
+      if (error) {
+        throw error
+      }
+      response.status(201).send(`Updated restaurant: ${id}`)
+    })
+  }
+
   module.exports = {
     createRestaurant,
     getRestaurants,
@@ -137,6 +150,8 @@ const createRestaurant = (request, response) => {
     updateSections,
     updateMenuEntry,
     deleteMenuEntry,
-    getRestaurantsFromDistance
+    getRestaurantsFromDistance,
+    updateImages,
+    updateRestaurantData
   }
 

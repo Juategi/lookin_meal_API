@@ -1,12 +1,4 @@
-const Pool = require('pg').Pool
-const pool = new Pool({
-  user: 'postgres',
-  host: 'localhost',
-  //host: '/cloudsql/lookinmeal-dcf41:europe-west1:lookinmeal',
-  database: 'postgres',
-  password: 'qHeNfB1d5jNOrf8o',
-  port: 5432,
-})
+const pool = require("./mypool").pool
 
 const query = (request, response) => {
     const {query, locality, latitude, longitude} = request.headers;
