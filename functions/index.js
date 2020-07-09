@@ -10,7 +10,7 @@ const bodyParser = require('body-parser')
 const dbu = require('./users')
 const dbr = require('./restaurants')
 const dbs = require('./search')
-const port = 3000
+const port = 4000
 const cCPUs   = require('os').cpus().length
 
 if( cluster.isMaster ) {

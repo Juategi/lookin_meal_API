@@ -40,7 +40,7 @@ const updateUser = (request, response) => {
       if (error) {
         throw error
       }
-      response.status(201).send(`User added with id: ${id}`)
+      response.status(201).send(`User updated with id: ${id}`)
     }
   )
 }
