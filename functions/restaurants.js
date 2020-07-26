@@ -22,8 +22,8 @@ const createRestaurant = (request, response) => {
 
   const getRestaurantsFromDistance = (request, response) => {
     const {latitude, longitude, city} = request.headers;
-    pool.query('select *, distance($1, $2, latitude, longitude) as distance from restaurant where city =$3 order by distance asc limit 10;',
-    [latitude, longitude, city], (error, results) => {
+    pool.query('select *, distance($1, $2, latitude, longitude) as distance from restaurant order by distance asc limit 10;',
+    [latitude, longitude], (error, results) => {
       if (error) {
         throw error
       }
