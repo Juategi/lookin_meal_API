@@ -47,6 +47,7 @@ else {
   app.get('/allrating', dbu.getAllRatings)
   app.get('/restaurants', dbr.getRestaurantsFromDistance)
   app.get('/search', dbs.queryRestaurants)
+  app.get('/searchentry', dbs.queryEntries)
   app.post('/users', dbu.createUser)
   app.post('/userfavs', dbu.addToUserFavorites)
   app.post('/restaurants', dbr.createRestaurant)

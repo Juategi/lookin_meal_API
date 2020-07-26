@@ -28,6 +28,20 @@ const queryRestaurants = (request, response) => {
     })
   }
 
+  
+const queryEntries = (request, response) => {
+  const {query, locality, latitude, longitude, valoration, price} = request.headers;
+   const statement = `SELECT m.*, AVG(r.rating) as rating, COUNT(r) as numreviews, re.*, distance($2, $3, re.latitude, re.longitude) as distance FROM restaurant re, menuentry m left join rating r on m.entry_id=r.entry_id WHERE re.restaurant_id = m.restaurant_id and m.name ILIKE $1 group by m.entry_id, re.restaurant_id`
+  pool.query(statement,[query, latitude, longitude], (error, results) => {
+    if (error) {
+      throw error
+    }
+    response.status(200).json(results.rows)
+  })
+}
+
+
   module.exports={
       queryRestaurants,
+      queryEntries
   }

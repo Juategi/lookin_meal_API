@@ -22,9 +22,10 @@ curl -X GET http://localhost:5000/users -d "id=1"
 select name,latitude,longitude, distance(39.4534311, -0.3741785, latitude, longitude) as dist from restaurant where city ='Valencia' order by dist asc limit 10;
 select *, distance(39.4534311, -0.3741785, latitude, longitude) as dist from restaurant where city ='Valencia' order by dist asc limit 10;
 
-
 select array_agg(c) as alltypes from (select distinct unnest(types) from restaurant) as dt(c);
 
+
+SELECT m.*, AVG(r.rating) as rating, COUNT(r) as numreviews, re.*, distance(39.4534311, -0.3741785, re.latitude, re.longitude) as distance FROM restaurant re, menuentry m left join rating r on m.entry_id=r.entry_id WHERE re.restaurant_id = m.restaurant_id and m.name ILIKE '%a%' group by m.entry_id, re.restaurant_id;
 
 Café
 Afghan
