@@ -20,12 +20,23 @@ const queryRestaurants = (request, response) => {
         statement = `select *, distance($2, $3, latitude, longitude) as distance from restaurant where name ILIKE $1 and types && $4::text[] order by rating desc limit 10`
       }
     }
-    pool.query(statement,[query, latitude, longitude, types], (error, results) => {
-      if (error) {
-        throw error
-      }
-      response.status(200).json(results.rows)
-    })
+    if(types == "null"){
+      pool.query(statement,[query, latitude, longitude], (error, results) => {
+        if (error) {
+          throw error
+        }
+        response.status(200).json(results.rows)
+      })
+    }
+    else{
+      pool.query(statement,[query, latitude, longitude, types], (error, results) => {
+        if (error) {
+          throw error
+        }
+        response.status(200).json(results.rows)
+      })
+    }
+    
   }
 
   

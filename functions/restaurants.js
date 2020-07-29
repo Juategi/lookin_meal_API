@@ -31,6 +31,17 @@ const createRestaurant = (request, response) => {
     })
   }
 
+  const getRestaurantsFromSquare = (request, response) => {
+    const {latitude, longitude, la1, la2, lo1, lo2} = request.headers;
+    pool.query('select *, distance($1, $2, latitude, longitude) as distance from restaurant where latitude >= $3 and latitude <= $4 and longitude >= $5 and longitude <= $6',
+    [latitude, longitude, la1, la2, lo1, lo2], (error, results) => {
+      if (error) {
+        throw error
+      }
+      response.status(200).json(results.rows)
+    })
+  }
+
   const addMenuEntry = (request, response) => {
     const {restaurant_id, name, section, price, image, pos} = request.body
     pool.query('INSERT INTO menuentry (restaurant_id, name, section, price, image, pos) VALUES ($1, $2, $3, $4, $5, $6) RETURNING entry_id',
@@ -152,6 +163,7 @@ const createRestaurant = (request, response) => {
     deleteMenuEntry,
     getRestaurantsFromDistance,
     updateImages,
-    updateRestaurantData
+    updateRestaurantData,
+    getRestaurantsFromSquare
   }
 
