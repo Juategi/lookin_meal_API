@@ -43,9 +43,9 @@ const createRestaurant = (request, response) => {
   }
 
   const addMenuEntry = (request, response) => {
-    const {restaurant_id, name, section, price, image, pos} = request.body
-    pool.query('INSERT INTO menuentry (restaurant_id, name, section, price, image, pos) VALUES ($1, $2, $3, $4, $5, $6) RETURNING entry_id',
-     [restaurant_id, name, section, price, image, pos], (error, results) => {
+    const {restaurant_id, name, section, price, image, pos, description} = request.body
+    pool.query('INSERT INTO menuentry (restaurant_id, name, section, price, image, pos, description) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING entry_id',
+     [restaurant_id, name, section, price, image, pos, description], (error, results) => {
       if (error) {
         throw error
       }
@@ -54,9 +54,9 @@ const createRestaurant = (request, response) => {
   }
 
   const updateMenuEntry = (request, response) => {
-    const {entry_id, name, section, price, image, pos} = request.body
-    pool.query('UPDATE menuentry SET name = $2, section = $3, price = $4, image = $5, pos = $6 WHERE entry_id = $1',
-     [entry_id, name, section, price, image, pos], (error, results) => {
+    const {entry_id, name, section, price, image, pos, description} = request.body
+    pool.query('UPDATE menuentry SET name = $2, section = $3, price = $4, image = $5, pos = $6, description = $7 WHERE entry_id = $1',
+     [entry_id, name, section, price, image, pos, description], (error, results) => {
       if (error) {
         throw error
       }
@@ -90,6 +90,31 @@ const createRestaurant = (request, response) => {
         response.status(200).json(results.rows)
       }
     )
+  }
+
+  const getDailyMenu = (request, response) => {
+    const {restaurant_id} = request.headers;
+    pool.query(
+      `SELECT dailymenu from restaurant where restaurant_id = $1`,[restaurant_id],
+      (error, results) => {
+        if (error) {
+          throw error
+        }
+        response.status(200).json(results.rows)
+      }
+    )
+  }
+
+  const updateDailyMenu = (request, response) => {
+    var {restaurant_id, dailymenu} = request.body
+    sections = sections.split(', ');
+    pool.query(`UPDATE restaurant SET dailymenu = $2 WHERE restaurant_id = $1`,
+     [restaurant_id, dailymenu], (error, results) => {
+      if (error) {
+        throw error
+      }
+      response.status(201).send(`Dailymenu added in: ${restaurant_id}`)
+    })
   }
 
   const addSection = (request, response) => {
@@ -164,6 +189,8 @@ const createRestaurant = (request, response) => {
     getRestaurantsFromDistance,
     updateImages,
     updateRestaurantData,
-    getRestaurantsFromSquare
+    getRestaurantsFromSquare,
+    getDailyMenu,
+    updateDailyMenu
   }
 
