@@ -21,8 +21,8 @@ const getUsers = (request, response) => {
 }
 
 const createUser = (request, response) => {
-  const {id, name, email, service, image} = request.body
-  pool.query('INSERT INTO users (user_id, name, email, service, image) VALUES ($1, $2, $3, $4, $5)', [id, name, email, service, image], (error, results) => {
+  const {id, name, email, service, image, country, username} = request.body
+  pool.query('INSERT INTO users (user_id, name, email, service, image, country, username) VALUES ($1, $2, $3, $4, $5, $6, $7)', [id, name, email, service, image, country, username], (error, results) => {
     if (error) {
       throw error
     }
@@ -43,6 +43,32 @@ const updateUser = (request, response) => {
       response.status(201).send(`User updated with id: ${id}`)
     }
   )
+}
+
+const checkUsername = (request, response) => {
+  const {username} = request.headers;
+  const statement = 'SELECT username FROM users WHERE username = $1'
+  pool.query(statement,[username], (error, results) => {
+    if (error) {
+      response.status(400).send(error)
+    }
+    else{
+      response.status(200).json(results.rows)
+    }
+  })
+}
+
+const checkMail = (request, response) => {
+  const {email} = request.headers;
+  const statement = 'SELECT email FROM users WHERE email = $1'
+  pool.query(statement,[email], (error, results) => {
+    if (error) {
+      response.status(400).send(error)
+    }
+    else{
+      response.status(200).json(results.rows)
+    }
+  })
 }
 
 const getUserFavorites = (request, response) => {
@@ -156,5 +182,7 @@ module.exports = {
   addRate,
   getRating,
   getAllRatings,
-  deleteRating
+  deleteRating,
+  checkMail,
+  checkUsername
 }

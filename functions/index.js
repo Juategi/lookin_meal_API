@@ -50,6 +50,8 @@ else {
   app.get('/searchentry', dbs.queryEntries)
   app.get('/square', dbr.getRestaurantsFromSquare)
   app.get('/daily', dbr.getDailyMenu)
+  app.get('/checkuser', dbu.checkUsername)
+  app.get('/checkmail', dbu.checkMail)
   app.post('/users', dbu.createUser)
   app.post('/userfavs', dbu.addToUserFavorites)
   app.post('/restaurants', dbr.createRestaurant)
