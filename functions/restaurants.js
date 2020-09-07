@@ -107,7 +107,7 @@ const createRestaurant = (request, response) => {
 
   const updateDailyMenu = (request, response) => {
     var {restaurant_id, dailymenu} = request.body
-    sections = sections.split(', ');
+    dailymenu = dailymenu.split(', ');
     pool.query(`UPDATE restaurant SET dailymenu = $2 WHERE restaurant_id = $1`,
      [restaurant_id, dailymenu], (error, results) => {
       if (error) {
