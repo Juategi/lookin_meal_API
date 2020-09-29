@@ -20,6 +20,27 @@ const createRestaurant = (request, response) => {
     })
   }
 
+  const getRecently = (request, response) => {
+    const {user_id} = request.headers;
+    pool.query("SELECT * FROM restaurant r, users u where u.user_id = $1 and r.restaurant_id = ANY(u.recently::int[])", [user_id], (error, results) => {
+      if (error) {
+        throw error
+      }
+      response.status(200).json(results.rows)
+    })
+  }
+
+  const updateRecently = (request, response) => {
+    const {user_id, recently} = request.body
+    pool.query('UPDATE users SET recently = $2 WHERE user_id = $1',
+     [user_id, recently], (error, results) => {
+      if (error) {
+        throw error
+      }
+      response.status(201).send(`Recently updated: ${user_id}`)
+    })
+  }
+
   const getRestaurantsFromDistance = (request, response) => {
     const {latitude, longitude, city} = request.headers;
     pool.query('select *, distance($1, $2, latitude, longitude) as distance from restaurant order by distance asc limit 10;',
@@ -191,6 +212,8 @@ const createRestaurant = (request, response) => {
     updateRestaurantData,
     getRestaurantsFromSquare,
     getDailyMenu,
-    updateDailyMenu
+    updateDailyMenu,
+    getRecently,
+    updateRecently
   }
 
