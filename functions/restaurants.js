@@ -21,8 +21,8 @@ const createRestaurant = (request, response) => {
   }
 
   const getRecently = (request, response) => {
-    const {user_id} = request.headers;
-    pool.query("SELECT * FROM restaurant r, users u where u.user_id = $1 and r.restaurant_id = ANY(u.recently::int[])", [user_id], (error, results) => {
+    const {user_id, latitude, longitude} = request.headers;
+    pool.query("SELECT r.*, distance($2, $3, latitude, longitude) as distance FROM restaurant r, users u where u.user_id = $1 and r.restaurant_id = ANY(u.recently::int[])", [user_id, latitude, longitude], (error, results) => {
       if (error) {
         throw error
       }
