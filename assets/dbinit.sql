@@ -26,8 +26,13 @@ select *, distance(39.4534311, -0.3741785, latitude, longitude) as dist from res
 
 select array_agg(c) as alltypes from (select distinct unnest(types) from restaurant) as dt(c);
 
+SELECT re.*, e.*, distance($2, $3, latitude, longitude) as distance FROM restaurant re, menuentry e where distance < 3.0 and re.restaurant_id = e.restaurant_id order by count(select r.* from restaurant re, menuentry e, rating r where r.entry_id = e.entry_id and r.ratedate > current_date - 7) desc limit 8;
 
-SELECT m.*, AVG(r.rating) as mrating, COUNT(r) as numreviews, re.*, distance(39.4534311, -0.3741785, re.latitude, re.longitude) as distance FROM restaurant re, menuentry m left join rating r on m.entry_id=r.entry_id WHERE re.restaurant_id = m.restaurant_id and m.name ILIKE '%a%' group by m.entry_id, re.restaurant_id order by mrating desc limit 15;
+SELECT re.*, e.*, distance(39.4704643, -0.3518671, latitude, longitude) as distance FROM restaurant re, menuentry e where distance < 3.0 and re.restaurant_id = e.restaurant_id order by count(select * from rating r where r.entry_id = e.entry_id and r.ratedate > current_date - 7) desc limit 8;
+
+select re.name, e.name, count(*) , distance(39.4704643, -0.3518671, re.latitude, re.longitude) as distance from restaurant re, menuentry e, rating r where distance(39.4704643, -0.3518671, re.latitude, re.longitude) < 3.0 and re.restaurant_id = e.restaurant_id and r.entry_id = e.entry_id and r.ratedate > current_date - 7 group by e.entry_id, re.restaurant_id order by count(*) desc limit 8;
+
+select re.*, e.*, distance($1, $2, re.latitude, re.longitude) as distance from restaurant re, menuentry e, rating r where distance($1, $2, re.latitude, re.longitude) < 3.0 and re.restaurant_id = e.restaurant_id and r.entry_id = e.entry_id and r.ratedate > current_date - 7 group by e.entry_id, re.restaurant_id order by count(*) desc limit 8;
 
 Café
 Afghan

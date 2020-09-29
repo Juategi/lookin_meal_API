@@ -41,6 +41,16 @@ const createRestaurant = (request, response) => {
     })
   }
 
+  const getPopular = (request, response) => {
+    const {latitude, longitude} = request.headers;
+    pool.query("select re.*, e.*, distance($1, $2, re.latitude, re.longitude) as distance from restaurant re, menuentry e, rating r where distance($1, $2, re.latitude, re.longitude) < 3.0 and re.restaurant_id = e.restaurant_id and r.entry_id = e.entry_id and r.ratedate > current_date - 7 group by e.entry_id, re.restaurant_id order by count(*) desc limit 8", [latitude, longitude], (error, results) => {
+      if (error) {
+        throw error
+      }
+      response.status(200).json(results.rows)
+    })
+  }
+
   const getRestaurantsFromDistance = (request, response) => {
     const {latitude, longitude, city} = request.headers;
     pool.query('select *, distance($1, $2, latitude, longitude) as distance from restaurant order by distance asc limit 10;',
@@ -214,6 +224,7 @@ const createRestaurant = (request, response) => {
     getDailyMenu,
     updateDailyMenu,
     getRecently,
-    updateRecently
+    updateRecently,
+    getPopular
   }
 

@@ -53,6 +53,7 @@ else {
   app.get('/checkuser', dbu.checkUsername)
   app.get('/checkmail', dbu.checkMail)
   app.get('/recently', dbr.getRecently)
+  app.get('/popular', dbr.getPopular)
   app.post('/users', dbu.createUser)
   app.post('/userfavs', dbu.addToUserFavorites)
   app.post('/restaurants', dbr.createRestaurant)
