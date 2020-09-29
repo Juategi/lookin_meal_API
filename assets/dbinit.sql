@@ -30,7 +30,7 @@ SELECT re.*, e.*, distance($2, $3, latitude, longitude) as distance FROM restaur
 
 SELECT re.*, e.*, distance(39.4704643, -0.3518671, latitude, longitude) as distance FROM restaurant re, menuentry e where distance < 3.0 and re.restaurant_id = e.restaurant_id order by count(select * from rating r where r.entry_id = e.entry_id and r.ratedate > current_date - 7) desc limit 8;
 
-select re.name, e.name, count(*) , distance(39.4704643, -0.3518671, re.latitude, re.longitude) as distance from restaurant re, menuentry e, rating r where distance(39.4704643, -0.3518671, re.latitude, re.longitude) < 3.0 and re.restaurant_id = e.restaurant_id and r.entry_id = e.entry_id and r.ratedate > current_date - 7 group by e.entry_id, re.restaurant_id order by count(*) desc limit 8;
+select re.name, e.name, count(*) , distance(39.4704643, -0.3518671, re.latitude, re.longitude) as distance, AVG(r.rating) as rating, COUNT(r) as numreviews from restaurant re, menuentry e, rating r where distance(39.4704643, -0.3518671, re.latitude, re.longitude) < 3.0 and re.restaurant_id = e.restaurant_id and r.entry_id = e.entry_id and r.ratedate > current_date - 7 group by e.entry_id, re.restaurant_id order by count(*) desc limit 8;
 
 select re.*, e.*, distance($1, $2, re.latitude, re.longitude) as distance from restaurant re, menuentry e, rating r where distance($1, $2, re.latitude, re.longitude) < 3.0 and re.restaurant_id = e.restaurant_id and r.entry_id = e.entry_id and r.ratedate > current_date - 7 group by e.entry_id, re.restaurant_id order by count(*) desc limit 8;
 
