@@ -43,7 +43,7 @@ const createRestaurant = (request, response) => {
 
   const getPopular = (request, response) => {
     const {latitude, longitude} = request.headers;
-    pool.query("select re.*, e.name as entryname, e.entry_id, e.pos, e.section, e.price, e.image, e.description, distance($1, $2, re.latitude, re.longitude) as distance, AVG(r.rating) as rating, COUNT(r) as numreviews from restaurant re, menuentry e, rating r where distance($1, $2, re.latitude, re.longitude) < 3.0 and re.restaurant_id = e.restaurant_id and r.entry_id = e.entry_id and r.ratedate > current_date - 7 group by e.entry_id, re.restaurant_id order by count(*) desc limit 8", [latitude, longitude], (error, results) => {
+    pool.query("select re.*, e.entry_id, distance($1, $2, re.latitude, re.longitude) as distance, AVG(r.rating) as rating, COUNT(r) as numreviews from restaurant re, menuentry e, rating r where distance($1, $2, re.latitude, re.longitude) < 3.0 and re.restaurant_id = e.restaurant_id and r.entry_id = e.entry_id and r.ratedate > current_date - 7 group by e.entry_id, re.restaurant_id order by count(*) desc limit 8", [latitude, longitude], (error, results) => {
       if (error) {
         throw error
       }
@@ -74,9 +74,9 @@ const createRestaurant = (request, response) => {
   }
 
   const addMenuEntry = (request, response) => {
-    const {restaurant_id, name, section, price, image, pos, description} = request.body
-    pool.query('INSERT INTO menuentry (restaurant_id, name, section, price, image, pos, description) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING entry_id',
-     [restaurant_id, name, section, price, image, pos, description], (error, results) => {
+    const {restaurant_id, name, section, price, image, pos, description, allergens} = request.body
+    pool.query('INSERT INTO menuentry (restaurant_id, name, section, price, image, pos, description, allergens) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING entry_id',
+     [restaurant_id, name, section, price, image, pos, description, allergens], (error, results) => {
       if (error) {
         throw error
       }
@@ -85,9 +85,9 @@ const createRestaurant = (request, response) => {
   }
 
   const updateMenuEntry = (request, response) => {
-    const {entry_id, name, section, price, image, pos, description} = request.body
-    pool.query('UPDATE menuentry SET name = $2, section = $3, price = $4, image = $5, pos = $6, description = $7 WHERE entry_id = $1',
-     [entry_id, name, section, price, image, pos, description], (error, results) => {
+    const {entry_id, name, section, price, image, pos, description, allergens} = request.body
+    pool.query('UPDATE menuentry SET name = $2, section = $3, price = $4, image = $5, pos = $6, description = $7, allergens = $8 WHERE entry_id = $1',
+     [entry_id, name, section, price, image, pos, description, allergens], (error, results) => {
       if (error) {
         throw error
       }
