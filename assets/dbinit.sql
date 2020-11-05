@@ -18,21 +18,27 @@ commit;
 
 CREATE OR REPLACE FUNCTION distance(lat1 FLOAT, lon1 FLOAT, lat2 FLOAT, lon2 FLOAT) RETURNS FLOAT AS $$ DECLARE x float = 111.12 * (lat2 - lat1); y float = 111.12 * (lon2 - lon1) * cos(lat1 / 92.215); BEGIN RETURN sqrt(x * x + y * y); END $$ LANGUAGE plpgsql;
 
-curl http://localhost:5000/users -X POST -d "id=11a" -d "name=Elaine" -d "email=elaine@example.com" -d "service=GM" -d "image=myimage" 
-curl -X GET http://localhost:5000/users -d "id=1"
+CREATE OR REPLACE FUNCTION totalRating(rating float, votes integer) RETURN FLOAT AS $$ DECLARE x float = 
 
-select name,latitude,longitude, distance(39.4534311, -0.3741785, latitude, longitude) as dist from restaurant where city ='Valencia' order by dist asc limit 10;
-select *, distance(39.4534311, -0.3741785, latitude, longitude) as dist from restaurant where city ='Valencia' order by dist asc limit 10;
+select name from restaurant where regexp_split_to_array(lower(name), '\s+') @> array['bar', 'food'];
+select name from restaurant where to_tsvector('simple', name) @@ to_tsquery('simple', 'platero:* &utopi:* &fo:*');
+--select name from restaurant where to_tsvector('simple', name) @@ to_tsquery('simple', 'platero:*');
+select name from restaurant where to_tsvector('simple', name) @@ to_tsquery('simple', 'platero:* | utopi:* | fo:*'); 
 
-select array_agg(c) as alltypes from (select distinct unnest(types) from restaurant) as dt(c);
+--ORDER BY DISTANCE
+select *, distance($2, $3, latitude, longitude) as distance from restaurant where distance($2, $3, latitude, longitude) <= $4 and to_tsvector('simple', name) @@ to_tsquery('simple', $1) order by distance asc limit 10 offset $5 rows;
 
-SELECT re.*, e.*, distance($2, $3, latitude, longitude) as distance FROM restaurant re, menuentry e where distance < 3.0 and re.restaurant_id = e.restaurant_id order by count(select r.* from restaurant re, menuentry e, rating r where r.entry_id = e.entry_id and r.ratedate > current_date - 7) desc limit 8;
+select *, distance($2, $3, latitude, longitude) as distance from restaurant where distance($2, $3, latitude, longitude) <= $4 and to_tsvector('simple', name) @@ to_tsquery('simple', $1) and types && $6::text[] order by distance asc limit 10 offset $5 rows;
 
-SELECT re.*, e.*, distance(39.4704643, -0.3518671, latitude, longitude) as distance FROM restaurant re, menuentry e where distance < 3.0 and re.restaurant_id = e.restaurant_id order by count(select * from rating r where r.entry_id = e.entry_id and r.ratedate > current_date - 7) desc limit 8;
+select r.name, distance(39.4693409, -0.3536466, r.latitude, r.longitude) as distance from restaurant r where to_tsvector('simple', r.name) @@ to_tsquery('simple', 'the:* & vu:*') and distance(39.4693409, -0.3536466, r.latitude, r.longitude) <= 5.0 order by distance asc limit 10 offset 0 rows;
 
-select re.name, e.name, count(*) , distance(39.4704643, -0.3518671, re.latitude, re.longitude) as distance, AVG(r.rating) as rating, COUNT(r) as numreviews from restaurant re, menuentry e, rating r where distance(39.4704643, -0.3518671, re.latitude, re.longitude) < 3.0 and re.restaurant_id = e.restaurant_id and r.entry_id = e.entry_id and r.ratedate > current_date - 7 group by e.entry_id, re.restaurant_id order by count(*) desc limit 8;
 
-select re.*, e.*, distance($1, $2, re.latitude, re.longitude) as distance from restaurant re, menuentry e, rating r where distance($1, $2, re.latitude, re.longitude) < 3.0 and re.restaurant_id = e.restaurant_id and r.entry_id = e.entry_id and r.ratedate > current_date - 7 group by e.entry_id, re.restaurant_id order by count(*) desc limit 8;
+-- ORDER BY RATINGS
+select r.*, distance($2, $3, r.latitude, r.longitude) as distance from restaurant r, menuentry m, rating ra where distance($2, $3, r.latitude, r.longitude) <= $4 and to_tsvector('simple', r.name) @@ to_tsquery('simple', $1) and r.types && $6::text[] and m.restaurant_id = r.restaurant_id and ra.entry_id = m.entry_id order by count(ra) asc limit 10 offset $5 rows group by r.restaurant_id;
+
+select r.name, distance(39.4693409, -0.3536466, r.latitude, r.longitude) as distance, (sum(ra.rating)*0.5/count(ra) + count(ra)*0.0025) from restaurant r inner join menuentry m on m.restaurant_id = r.restaurant_id inner join rating ra on ra.entry_id = m.entry_id where distance(39.4693409, -0.3536466, r.latitude, r.longitude) <= 5.0  and to_tsvector('simple', r.name) @@ to_tsquery('simple', 'La:*') group by r.restaurant_id order by (sum(ra.rating)*0.5/count(ra) + count(ra)*0.0025) desc limit 10 offset 0 rows;
+
+--*5*0.5/1000 = 0.0025
 
 Café
 Afghan
@@ -49,7 +55,7 @@ Bagels
 Bahamian
 Bakery
 Balti
-Bangladeshi
+BangladeshiW
 Bar
 Barbeque
 Basque

@@ -1,15 +1,15 @@
 const pool = require("./mypool").pool
 
 const queryRestaurants = (request, response) => {
-    const {query, locality, latitude, longitude, valoration, types} = request.headers;
+    const {query, maxDistance, latitude, longitude, valoration, offset, types} = request.headers;
     console.log(types)
     var statement = ""
     if(valoration == "false"){
       if(types == "null"){
-        statement = `select *, distance($2, $3, latitude, longitude) as distance from restaurant where name ILIKE $1 order by distance asc limit 10`
+        statement = "select *, distance($2, $3, latitude, longitude) as distance from restaurant where distance($2, $3, latitude, longitude) <= $4 and to_tsvector('simple', name) @@ to_tsquery('simple', $1) order by distance asc limit 10 offset $5 rows;"
       }
       else{
-        statement = `select *, distance($2, $3, latitude, longitude) as distance from restaurant where name ILIKE $1 and types && $4::text[] order by distance asc limit 10`
+        statement = "select *, distance($2, $3, latitude, longitude) as distance from restaurant where distance($2, $3, latitude, longitude) <= $4 and to_tsvector('simple', name) @@ to_tsquery('simple', $1) and types && $6::text[] order by distance asc limit 10 offset $5 rows;"
       }
     }
     else{
@@ -21,7 +21,7 @@ const queryRestaurants = (request, response) => {
       }
     }
     if(types == "null"){
-      pool.query(statement,[query, latitude, longitude], (error, results) => {
+      pool.query(statement,[query, latitude, longitude, maxDistance, offset], (error, results) => {
         if (error) {
           throw error
         }
@@ -29,7 +29,7 @@ const queryRestaurants = (request, response) => {
       })
     }
     else{
-      pool.query(statement,[query, latitude, longitude, types], (error, results) => {
+      pool.query(statement,[query, latitude, longitude, maxDistance, offset, types], (error, results) => {
         if (error) {
           throw error
         }
