@@ -34,9 +34,11 @@ select r.name, distance(39.4693409, -0.3536466, r.latitude, r.longitude) as dist
 
 
 -- ORDER BY RATINGS
-select r.*, distance($2, $3, r.latitude, r.longitude) as distance from restaurant r, menuentry m, rating ra where distance($2, $3, r.latitude, r.longitude) <= $4 and to_tsvector('simple', r.name) @@ to_tsquery('simple', $1) and r.types && $6::text[] and m.restaurant_id = r.restaurant_id and ra.entry_id = m.entry_id order by count(ra) asc limit 10 offset $5 rows group by r.restaurant_id;
+select r.name, distance($2, $3, r.latitude, r.longitude) as distance,  COALESCE((sum(ra.rating)*0.5/count(ra) + count(ra)*0.0025),0 ) from restaurant r LEFT OUTER join menuentry m on m.restaurant_id = r.restaurant_id LEFT OUTER join rating ra on ra.entry_id = m.entry_id where distance($2, $3, r.latitude, r.longitude) <= %4  and r.types && $6::text[] and to_tsvector('simple', r.name) @@ to_tsquery('simple', $1) group by r.restaurant_id order by COALESCE((sum(ra.rating)*0.5/count(ra) + count(ra)*0.0025),0 ) desc limit 10 offset %5 rows;
 
-select r.name, distance(39.4693409, -0.3536466, r.latitude, r.longitude) as distance, (sum(ra.rating)*0.5/count(ra) + count(ra)*0.0025) from restaurant r inner join menuentry m on m.restaurant_id = r.restaurant_id inner join rating ra on ra.entry_id = m.entry_id where distance(39.4693409, -0.3536466, r.latitude, r.longitude) <= 5.0  and to_tsvector('simple', r.name) @@ to_tsquery('simple', 'La:*') group by r.restaurant_id order by (sum(ra.rating)*0.5/count(ra) + count(ra)*0.0025) desc limit 10 offset 0 rows;
+select r.name, distance($2, $3, r.latitude, r.longitude) as distance,  COALESCE((sum(ra.rating)*0.5/count(ra) + count(ra)*0.0025),0 ) from restaurant r LEFT OUTER join menuentry m on m.restaurant_id = r.restaurant_id LEFT OUTER join rating ra on ra.entry_id = m.entry_id where distance($2, $3, r.latitude, r.longitude) <= %4  and to_tsvector('simple', r.name) @@ to_tsquery('simple', $1) group by r.restaurant_id order by COALESCE((sum(ra.rating)*0.5/count(ra) + count(ra)*0.0025),0 ) desc limit 10 offset %5 rows;
+
+select r.name, distance(39.4693409, -0.3536466, r.latitude, r.longitude) as distance,  COALESCE((sum(ra.rating)*0.5/count(ra) + count(ra)*0.0025),0 ) from restaurant r LEFT OUTER join menuentry m on m.restaurant_id = r.restaurant_id LEFT OUTER join rating ra on ra.entry_id = m.entry_id where distance(39.4693409, -0.3536466, r.latitude, r.longitude) <= 5.0  and to_tsvector('simple', r.name) @@ to_tsquery('simple', 'La:*') group by r.restaurant_id order by COALESCE((sum(ra.rating)*0.5/count(ra) + count(ra)*0.0025),0 ) desc limit 10 offset 0 rows;
 
 --*5*0.5/1000 = 0.0025
 
