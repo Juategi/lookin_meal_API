@@ -1,27 +1,37 @@
 const pool = require("./mypool").pool
 
 const queryRestaurants = (request, response) => {
-    const {query, maxDistance, latitude, longitude, valoration, offset, types} = request.headers;
-    console.log(types)
+    const {query, distance, latitude, longitude, valoration, offset, types} = request.headers;
     var statement = ""
-    if(valoration == "false"){
-      if(types == "null"){
+    console.log(query)
+    console.log(distance)
+    console.log(latitude)
+    console.log(longitude)
+    console.log(valoration)
+    console.log(offset)
+    console.log(types)
+    if(valoration != "Sort by relevance"){
+      if(types == "{}"){
+        console.log('aaaaa')
         statement = "select *, distance($2, $3, latitude, longitude) as distance from restaurant where distance($2, $3, latitude, longitude) <= $4 and to_tsvector('simple', name) @@ to_tsquery('simple', $1) order by distance asc limit 10 offset $5 rows;"
       }
       else{
+        console.log('eeee')
         statement = "select *, distance($2, $3, latitude, longitude) as distance from restaurant where distance($2, $3, latitude, longitude) <= $4 and to_tsvector('simple', name) @@ to_tsquery('simple', $1) and types && $6::text[] order by distance asc limit 10 offset $5 rows;"
       }
     }
     else{
-      if(types == "null"){
-        statement = "select r.name, distance($2, $3, r.latitude, r.longitude) as distance,  COALESCE((sum(ra.rating)*0.5/count(ra) + count(ra)*0.0025),0 ) from restaurant r LEFT OUTER join menuentry m on m.restaurant_id = r.restaurant_id LEFT OUTER join rating ra on ra.entry_id = m.entry_id where distance($2, $3, r.latitude, r.longitude) <= %4  and to_tsvector('simple', r.name) @@ to_tsquery('simple', $1) group by r.restaurant_id order by COALESCE((sum(ra.rating)*0.5/count(ra) + count(ra)*0.0025),0 ) desc limit 10 offset %5 rows;"
+      if(types == "{}"){
+        console.log('iiii')
+        statement = "select r.name, distance($2, $3, r.latitude, r.longitude) as distance,  COALESCE((sum(ra.rating)*0.5/count(ra) + count(ra)*0.0025),0 ) from restaurant r LEFT OUTER join menuentry m on m.restaurant_id = r.restaurant_id LEFT OUTER join rating ra on ra.entry_id = m.entry_id where distance($2, $3, r.latitude, r.longitude) <= $4  and to_tsvector('simple', r.name) @@ to_tsquery('simple', $1) group by r.restaurant_id order by COALESCE((sum(ra.rating)*0.5/count(ra) + count(ra)*0.0025),0 ) desc limit 10 offset $5 rows;"
       }
       else{
-        statement = "select r.name, distance($2, $3, r.latitude, r.longitude) as distance, COALESCE((sum(ra.rating)*0.5/count(ra) + count(ra)*0.0025),0 ) from restaurant r LEFT OUTER join menuentry m on m.restaurant_id = r.restaurant_id LEFT OUTER join rating ra on ra.entry_id = m.entry_id where distance($2, $3, r.latitude, r.longitude) <= %4  and r.types && $6::text[] and to_tsvector('simple', r.name) @@ to_tsquery('simple', $1) group by r.restaurant_id order by COALESCE((sum(ra.rating)*0.5/count(ra) + count(ra)*0.0025),0 ) desc limit 10 offset %5 rows;"
+        console.log('oooo')
+        statement = "select r.name, distance($2, $3, r.latitude, r.longitude) as distance, COALESCE((sum(ra.rating)*0.5/count(ra) + count(ra)*0.0025),0 ) from restaurant r LEFT OUTER join menuentry m on m.restaurant_id = r.restaurant_id LEFT OUTER join rating ra on ra.entry_id = m.entry_id where distance($2, $3, r.latitude, r.longitude) <= $4  and r.types && $6::text[] and to_tsvector('simple', r.name) @@ to_tsquery('simple', $1) group by r.restaurant_id order by COALESCE((sum(ra.rating)*0.5/count(ra) + count(ra)*0.0025),0 ) desc limit 10 offset $5 rows;"
       }
     }
-    if(types == "null"){
-      pool.query(statement,[query, latitude, longitude, maxDistance, offset], (error, results) => {
+    if(types == "{}"){
+      pool.query(statement,[query, latitude, longitude, distance, offset], (error, results) => {
         if (error) {
           throw error
         }
@@ -29,7 +39,7 @@ const queryRestaurants = (request, response) => {
       })
     }
     else{
-      pool.query(statement,[query, latitude, longitude, maxDistance, offset, types], (error, results) => {
+      pool.query(statement,[query, latitude, longitude, distance, offset, types], (error, results) => {
         if (error) {
           throw error
         }
