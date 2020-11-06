@@ -30,7 +30,7 @@ select *, distance($2, $3, latitude, longitude) as distance from restaurant wher
 
 select *, distance($2, $3, latitude, longitude) as distance from restaurant where distance($2, $3, latitude, longitude) <= $4 and to_tsvector('simple', name) @@ to_tsquery('simple', $1) and types && $6::text[] order by distance asc limit 10 offset $5 rows;
 
-select r.name, distance(39.4693409, -0.3536466, r.latitude, r.longitude) as distance from restaurant r where to_tsvector('simple', r.name) @@ to_tsquery('simple', 'l:*') and distance(39.4693409, -0.3536466, r.latitude, r.longitude) <= 5.0 and types && '{American}'::text[] order by distance asc limit 10 offset 0 rows;
+select r.name, distance(39.4693409, -0.3536466, r.latitude, r.longitude) as distance from restaurant r where to_tsvector('simple', r.name) @@ to_tsquery('simple', 'l:*') and distance(39.4693409, -0.3536466, r.latitude, r.longitude) <= 20.0 and types && `{"'Street Food'"}`::text[] order by distance asc limit 10 offset 0 rows;
 
 
 -- ORDER BY RATINGS
