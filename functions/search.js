@@ -19,10 +19,13 @@ const queryRestaurants = (request, response) => {
     }
     if(types == "{}"){
       statement = statement.replace("and r.types && $6::text[]", "and $6=$6")
+      statement = statement.replace("and types && $6::text[]", "and $6=$6")
     }
     if(query == ":*"){
       statement = statement.replace("and to_tsvector('simple', r.name) @@ to_tsquery('simple', $5)", "and $5=$5")
+      statement = statement.replace("and to_tsvector('simple', name) @@ to_tsquery('simple', $5)", "and $5=$5")
     }
+    console.log(statement)
     pool.query(statement,[latitude, longitude, distance, offset,query, types], (error, results) => {
       if (error) {
         throw error
