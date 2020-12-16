@@ -209,9 +209,9 @@ const createRestaurant = (request, response) => {
   }
 
   const updateRestaurantData = (request, response) => {
-    const {id,name,phone,website,address,types,schedule, delivery} = request.body
-    pool.query('UPDATE restaurant SET name = $2, phone = $3, website = $4, address = $5, types = $6, schedule = $7, delivery = $8 WHERE restaurant_id = $1',
-     [id,name,phone,website,address,types,schedule, delivery], (error, results) => {
+    const {id,name,phone,website,address,types,schedule, delivery, currency} = request.body
+    pool.query('UPDATE restaurant SET name = $2, phone = $3, website = $4, address = $5, types = $6, schedule = $7, delivery = $8, currency = $9 WHERE restaurant_id = $1',
+     [id,name,phone,website,address,types,schedule, delivery, currency], (error, results) => {
       if (error) {
         throw error
       }
