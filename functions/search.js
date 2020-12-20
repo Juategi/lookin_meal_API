@@ -1,6 +1,6 @@
 const pool = require("./mypool").pool
 
-const queryRestaurants = (request, response) => {
+async function queryRestaurants (request, response) {
     const {query, distance, latitude, longitude, valoration, offset, types} = request.headers;
     var statement = ""
     console.log(query)
@@ -25,13 +25,12 @@ const queryRestaurants = (request, response) => {
       statement = statement.replace("and to_tsvector('simple', r.name) @@ to_tsquery('simple', $5)", "and $5=$5")
       statement = statement.replace("and to_tsvector('simple', name) @@ to_tsquery('simple', $5)", "and $5=$5")
     }
-    console.log(statement)
-    pool.query(statement,[latitude, longitude, distance, offset,query, types], (error, results) => {
-      if (error) {
-        throw error
-      }
-      response.status(200).json(results.rows)
-    })
+    try {
+      results = await pool.query(statement,[latitude, longitude, distance, offset,query, types])
+    } catch (err) {
+      console.log(err.stack)
+    }
+    response.status(200).json(results.rows)
     /*
     if(valoration != "Sort by relevance"){
       if(types == "{}"){
@@ -73,7 +72,7 @@ const queryRestaurants = (request, response) => {
   }
 
   
-const queryEntries = (request, response) => {
+  async function queryEntries (request, response) {
   var {latitude, longitude, valoration, query1, query2, query3, rating1 , rating2 , rating3 , price1, price2, price3, allergens1, allergens2, allergens3} = request.headers;
     console.log(latitude)
     console.log(longitude)
@@ -189,25 +188,48 @@ const queryEntries = (request, response) => {
     }
   }
 
-  var result;
   stop_words = ['a', 'al', 'con', 'de', 'del', 'e', 'el', 'en', 'la', 'las', 'lo', 'los', 'y', 'an', 'and', 'the', 'of', 'with']
-  pool.query(statement,[latitude, longitude, query1, query2, query3, rating1 , rating2 , rating3 , price1, price2, price3, allergens1, allergens2, allergens3], (error, results) => {
-    if (error) {
-      throw error
+  var select
+  try {
+    select = await pool.query(statement,[latitude, longitude, query1, query2, query3, rating1 , rating2 , rating3 , price1, price2, price3, allergens1, allergens2, allergens3])
+  } catch (err) {
+    console.log(err.stack)
+  }
+  var results = select.rows
+  var count = 0;
+  for(var i in results) {
+    count++;
+  }
+  console.log(count)
+  if(count < 13){
+    var queryVector1 = query1.split(" ")
+    for(var i in queryVector1) {
+      word = queryVector1[i]
+      wordClean = word.replace(":*", "").replace("&", "")
+      if(stop_words.indexOf(wordClean) > -1){
+        queryVector1.splice(queryVector1.indexOf(word),1)
+      }
     }
-    result = results.rows[1]
-    var count = 0;
-    for(var i in result) {
-        count++;
+    var finalQuery1 = ""
+    for(var i in queryVector1){
+      if(i == 0){
+        word = queryVector1[i].replace("&", "")
+      }
+      else{
+        word = queryVector1[i].replace("&", "|")
+      }
+      finalQuery1 = finalQuery1 + " " + word
     }
-    console.log(count)
-    if(count < 12){
-      var queryVector1 = query1.split(" ")
-      console.log(queryVector1)
+    console.log(finalQuery1)
+    try {
+      select = await pool.query(statement,[latitude, longitude, finalQuery1, query2, query3, rating1 , rating2 , rating3 , price1, price2, price3, allergens1, allergens2, allergens3])
+    } catch (err) {
+      console.log(err.stack)
     }
-    response.status(200).json(results.rows)
-  })
-  
+    var results2 = select.rows
+
+    response.status(200).json(results.concat(results2)) 
+  } 
 }
 
 
