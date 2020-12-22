@@ -202,6 +202,7 @@ async function queryRestaurants (request, response) {
   }
   if(count < 15){
     var queryVector1 = query1.split(" ")
+    var finalQuery1 = ""
     if(queryVector1.length > 2){
       for(var i in queryVector1) {
         word = queryVector1[i]
@@ -210,9 +211,159 @@ async function queryRestaurants (request, response) {
           queryVector1.splice(queryVector1.indexOf(word),1)
         }
       }
+      for(var i in queryVector1){
+        if(i == 0){
+          finalQuery1 = finalQuery1 + " " + queryVector1[i].replace("&", "")
+        }
+        else{
+          finalQuery1 = finalQuery1 + " " + queryVector1[i]
+        } 
+      }
+      console.log(finalQuery1)
+      try {
+        select = await pool.query(statement,[latitude, longitude, finalQuery1, query2, query3, rating1 , rating2 , rating3 , price1, price2, price3, allergens1, allergens2, allergens3])
+      } catch (err) {
+        console.log(err.stack)
+      }
+      var results2 = select.rows
+      results = results.concat(results2)
+      var count = 0;
+      for(var i in results) {
+        count++;
+      }
+      if(count < 15){
+        finalQuery1 = ""
+        if(queryVector1.length < 3){
+          for(var i in queryVector1){
+            if(i == 0){
+              word = queryVector1[i].replace("&", "")
+            }
+            else{
+              word = queryVector1[i].replace("&", "|")
+            }
+            finalQuery1 = finalQuery1 + " " + word
+          }
+          console.log(finalQuery1)
+          try {
+            select = await pool.query(statement,[latitude, longitude, finalQuery1, query2, query3, rating1 , rating2 , rating3 , price1, price2, price3, allergens1, allergens2, allergens3])
+          } catch (err) {
+            console.log(err.stack)
+          }
+          var results2 = select.rows
+          response.status(200).json(results.concat(results2)) 
+        }
+        else if (queryVector1.length == 3){
+          for(var i in queryVector1){ 
+            finalQuery1 += "("    
+            var first = true; 
+            for(var j in queryVector1){
+              if(i != j){
+                if(first){
+                  finalQuery1 += queryVector1[j].replace("&", "")
+                  first = false
+                }
+                else{
+                  finalQuery1 += " " + queryVector1[j]
+                }
+              }
+            }
+            first = true
+            if(i == queryVector1.length-1){
+              finalQuery1 += ")" 
+            } 
+            else{
+              finalQuery1 += ") | " 
+            }
+            
+          }
+          console.log(finalQuery1)
+          try {
+            select = await pool.query(statement,[latitude, longitude, finalQuery1, query2, query3, rating1 , rating2 , rating3 , price1, price2, price3, allergens1, allergens2, allergens3])
+          } catch (err) {
+            console.log(err.stack)
+          }
+          var results2 = select.rows
+          response.status(200).json(results.concat(results2)) 
+        }
+        else{
+          for(var i in queryVector1){ 
+            finalQuery1 += "("    
+            var first = true; 
+            for(var j in queryVector1){
+              if(i != j){
+                if(first){
+                  finalQuery1 += queryVector1[j].replace("&", "")
+                  first = false
+                }
+                else{
+                  finalQuery1 += " " + queryVector1[j]
+                }
+              }
+            }
+            first = true
+            if(i == queryVector1.length-1){
+              finalQuery1 += ")" 
+            } 
+            else{
+              finalQuery1 += ") | " 
+            }           
+          }
+          console.log(finalQuery1)
+          try {
+            select = await pool.query(statement,[latitude, longitude, finalQuery1, query2, query3, rating1 , rating2 , rating3 , price1, price2, price3, allergens1, allergens2, allergens3])
+          } catch (err) {
+            console.log(err.stack)
+          }
+          var results2 = select.rows
+          var count = 0;
+          for(var i in results) {
+            count++;
+          }
+          if(count < 15){ //GRUPO 2
+            finalQuery1 = ""
+            for(var i = 0; i < queryVector1.length; i++){ 
+              finalQuery1 += "("    
+              var first = true; 
+              for(var j = 0; j < queryVector1.length; j++){
+                if(j != i && j != i+1){
+                  if(first){
+                    finalQuery1 += queryVector1[j].replace("&", "")
+                    first = false
+                  }
+                  else{
+                    finalQuery1 += " " + queryVector1[j]
+                  }
+                }
+              }
+              first = true
+              if(i == queryVector1.length-1){
+                finalQuery1 += ")" 
+              } 
+              else{
+                finalQuery1 += ") | " 
+              }           
+            }
+            console.log("nivel 2")
+            console.log(finalQuery1)
+            try {
+              select = await pool.query(statement,[latitude, longitude, finalQuery1, query2, query3, rating1 , rating2 , rating3 , price1, price2, price3, allergens1, allergens2, allergens3])
+            } catch (err) {
+              console.log(err.stack)
+            }
+            var results2 = select.rows
+            response.status(200).json(results.concat(results2)) 
+          }
+          else{
+            response.status(200).json(results.concat(results2)) 
+          }
+        }
+      }
+      else{
+        response.status(200).json(results) 
+      }
     }
-    var finalQuery1 = ""
-    if(queryVector1.lenght < 3){
+    else{
+      finalQuery1 = ""
       for(var i in queryVector1){
         if(i == 0){
           word = queryVector1[i].replace("&", "")
@@ -222,40 +373,15 @@ async function queryRestaurants (request, response) {
         }
         finalQuery1 = finalQuery1 + " " + word
       }
-    }
-    else {
-      for(var i in queryVector1){ 
-        finalQuery1 += "("    
-        var first = true; 
-        for(var j in queryVector1){
-          if(i != j){
-            if(first){
-              finalQuery1 += queryVector1[j].replace("&", "")
-              first = false
-            }
-            else{
-              finalQuery1 += queryVector1[j]
-            }
-          }
-        }
-        first = true
-        if(i == queryVector1.length-1){
-          finalQuery1 += ")" 
-        } 
-        else{
-          finalQuery1 += ") | " 
-        }
-        
+      console.log(finalQuery1)
+      try {
+        select = await pool.query(statement,[latitude, longitude, finalQuery1, query2, query3, rating1 , rating2 , rating3 , price1, price2, price3, allergens1, allergens2, allergens3])
+      } catch (err) {
+        console.log(err.stack)
       }
+      var results2 = select.rows
+      response.status(200).json(results.concat(results2)) 
     }
-    console.log(finalQuery1)
-    try {
-      select = await pool.query(statement,[latitude, longitude, finalQuery1, query2, query3, rating1 , rating2 , rating3 , price1, price2, price3, allergens1, allergens2, allergens3])
-    } catch (err) {
-      console.log(err.stack)
-    }
-    var results2 = select.rows
-    response.status(200).json(results.concat(results2)) 
   }
   else{
     response.status(200).json(results) 
