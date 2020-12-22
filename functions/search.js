@@ -168,7 +168,7 @@ async function queryRestaurants (request, response) {
     }
   }
   else{
-    var statement = "select re.*, e.entry_id as id1, distance($1, $2, re.latitude, re.longitude) as distance from menuentry e left join restaurant re on re.restaurant_id = e.restaurant_id left join rating r on r.entry_id = e.entry_id where $6=$6 and to_tsvector('simple', e.name) @@ to_tsquery('simple', $3) and (e.allergens && $12::text[] = False) and e.price <= $9 and ($4=$4 and $5=$5 and $7=$7 and $8=$8 and $10=$10 and $11=$11 and $13=$13 and $14=$14) group by e.entry_id, re.restaurant_id having AVG(r.rating) > $6::real order by distance($1, $2, re.latitude, re.longitude) asc limit 12;"
+    var statement = "select re.*, e.entry_id as id1, distance($1, $2, re.latitude, re.longitude) as distance from menuentry e left join restaurant re on re.restaurant_id = e.restaurant_id left join rating r on r.entry_id = e.entry_id where $6=$6 and to_tsvector('simple', e.name) @@ to_tsquery('simple', $3) and (e.allergens && $12::text[] = False) and e.price <= $9 and ($4=$4 and $5=$5 and $7=$7 and $8=$8 and $10=$10 and $11=$11 and $13=$13 and $14=$14) group by e.entry_id, re.restaurant_id having AVG(r.rating) > $6::real order by distance($1, $2, re.latitude, re.longitude) asc limit 15;"
 
     if(valoration == "Sort by price lower first"){
       statement = statement.replace("order by distance($1, $2, re.latitude, re.longitude) asc", "order by case when e.price != 0 then e.price end asc, case when e.price = 0 then e.price end desc")
@@ -188,7 +188,7 @@ async function queryRestaurants (request, response) {
     }
   }
 
-  stop_words = ['a', 'al', 'con', 'de', 'del', 'e', 'el', 'en', 'la', 'las', 'lo', 'los', 'y', 'an', 'and', 'the', 'of', 'with']
+  stop_words = ['a', 'al', 'con', 'de', 'del', 'e', 'el', 'en', 'la', 'las', 'lo', 'los', 'y', 'an', 'and', 'the', 'of', 'with', 'in', 'on']
   var select
   try {
     select = await pool.query(statement,[latitude, longitude, query1, query2, query3, rating1 , rating2 , rating3 , price1, price2, price3, allergens1, allergens2, allergens3])
@@ -200,25 +200,53 @@ async function queryRestaurants (request, response) {
   for(var i in results) {
     count++;
   }
-  console.log(count)
-  if(count < 13){
+  if(count < 15){
     var queryVector1 = query1.split(" ")
-    for(var i in queryVector1) {
-      word = queryVector1[i]
-      wordClean = word.replace(":*", "").replace("&", "")
-      if(stop_words.indexOf(wordClean) > -1){
-        queryVector1.splice(queryVector1.indexOf(word),1)
+    if(queryVector1.length > 2){
+      for(var i in queryVector1) {
+        word = queryVector1[i]
+        wordClean = word.replace(":*", "").replace("&", "")
+        if(stop_words.indexOf(wordClean) > -1){
+          queryVector1.splice(queryVector1.indexOf(word),1)
+        }
       }
     }
     var finalQuery1 = ""
-    for(var i in queryVector1){
-      if(i == 0){
-        word = queryVector1[i].replace("&", "")
+    if(queryVector1.lenght < 3){
+      for(var i in queryVector1){
+        if(i == 0){
+          word = queryVector1[i].replace("&", "")
+        }
+        else{
+          word = queryVector1[i].replace("&", "|")
+        }
+        finalQuery1 = finalQuery1 + " " + word
       }
-      else{
-        word = queryVector1[i].replace("&", "|")
+    }
+    else {
+      for(var i in queryVector1){ 
+        finalQuery1 += "("    
+        var first = true; 
+        for(var j in queryVector1){
+          if(i != j){
+            if(first){
+              finalQuery1 += queryVector1[j].replace("&", "")
+              first = false
+            }
+            else{
+              finalQuery1 += queryVector1[j]
+            }
+          }
+        }
+        first = true
+        if(i == queryVector1.length-1){
+          finalQuery1 += ")" 
+        } 
+        else{
+          finalQuery1 += ") | " 
+        }
+        
       }
-      finalQuery1 = finalQuery1 + " " + word
     }
     console.log(finalQuery1)
     try {
@@ -227,8 +255,10 @@ async function queryRestaurants (request, response) {
       console.log(err.stack)
     }
     var results2 = select.rows
-
     response.status(200).json(results.concat(results2)) 
+  }
+  else{
+    response.status(200).json(results) 
   } 
 }
 
