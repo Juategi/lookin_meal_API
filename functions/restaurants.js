@@ -86,9 +86,9 @@ const createRestaurant = (request, response) => {
   }
 
   const addMenuEntry = (request, response) => {
-    const {restaurant_id, name, section, price, image, pos, description, allergens} = request.body
-    pool.query('INSERT INTO menuentry (restaurant_id, name, section, price, image, pos, description, allergens) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING entry_id',
-     [restaurant_id, name, section, price, image, pos, description, allergens], (error, results) => {
+    const {restaurant_id, name, section, price, image, pos, description, hide, allergens} = request.body
+    pool.query('INSERT INTO menuentry (restaurant_id, name, section, price, image, pos, description, hide, allergens) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING entry_id',
+     [restaurant_id, name, section, price, image, pos, description, hide, allergens], (error, results) => {
       if (error) {
         throw error
       }
@@ -97,9 +97,9 @@ const createRestaurant = (request, response) => {
   }
 
   const updateMenuEntry = (request, response) => {
-    const {entry_id, name, section, price, image, pos, description, allergens} = request.body
-    pool.query('UPDATE menuentry SET name = $2, section = $3, price = $4, image = $5, pos = $6, description = $7, allergens = $8 WHERE entry_id = $1',
-     [entry_id, name, section, price, image, pos, description, allergens], (error, results) => {
+    const {entry_id, name, section, price, image, pos, description, hide, allergens} = request.body
+    pool.query('UPDATE menuentry SET name = $2, section = $3, price = $4, image = $5, pos = $6, description = $7, allergens = $9, hide = $8 WHERE entry_id = $1',
+     [entry_id, name, section, price, image, pos, description, hide, allergens], (error, results) => {
       if (error) {
         throw error
       }

@@ -115,11 +115,11 @@ const deleteFromUserFavorites = (request, response) => {
 }
 
 const addRate = (request, response) => {
-  const {user_id, entry_id, rating, ratedate} = request.body
+  const {user_id, entry_id, rating, ratedate, comment} = request.body
 
   pool.query(
-    'INSERT INTO rating (user_id, entry_id, rating, ratedate) VALUES ($1, $2, $3, $4)',
-    [user_id, entry_id, rating, ratedate],
+    'INSERT INTO rating (user_id, entry_id, rating, ratedate, comment) VALUES ($1, $2, $3, $4, $5)',
+    [user_id, entry_id, rating, ratedate, comment],
     (error, results) => {
       if (error) {
         throw error
@@ -133,7 +133,7 @@ const getRating = (request, response) => {
   const {user_id, entry_id} = request.headers;
 
   pool.query(
-    `SELECT rating,ratedate FROM rating WHERE user_id = $1 and entry_id = $2 `,[user_id, entry_id],
+    `SELECT * FROM rating WHERE user_id = $1 and entry_id = $2 `,[user_id, entry_id],
     (error, results) => {
       if (error) {
         throw error
@@ -161,7 +161,7 @@ const getAllRatings = (request, response) => {
   const {user_id} = request.headers;
 
   pool.query(
-    `SELECT rating,entry_id,ratedate FROM rating WHERE user_id = $1`,[user_id],
+    `SELECT * FROM rating WHERE user_id = $1`,[user_id],
     (error, results) => {
       if (error) {
         throw error

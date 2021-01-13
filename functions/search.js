@@ -3,6 +3,7 @@ const pool = require("./mypool").pool
 async function queryRestaurants (request, response) {
     const {query, distance, latitude, longitude, valoration, offset, types} = request.headers;
     var statement = ""
+    /*
     console.log(query)
     console.log(distance)
     console.log(latitude)
@@ -10,7 +11,7 @@ async function queryRestaurants (request, response) {
     console.log(valoration)
     console.log(offset)
     console.log(types)
-
+    */
     if(valoration != "Sort by relevance"){
         statement = "select *, distance($1, $2, latitude, longitude) as distance from restaurant where distance($1, $2, latitude, longitude) <= $3 and to_tsvector('simple', name) @@ to_tsquery('simple', $5) and types && $6::text[] order by distance asc limit 10 offset $4 rows;"
     }
@@ -196,6 +197,7 @@ async function queryRestaurants (request, response) {
     console.log(err.stack)
   }
   var results = select.rows
+  console.log(query1)
   var count = 0;
   for(var i in results) {
     count++;
