@@ -49,7 +49,8 @@ select re.name, e.name, w.name, distance(39.4693409, -0.3536466, re.latitude, re
 --having
 select re.name, e.name, w.name, distance(39.4693409, -0.3536466, re.latitude, re.longitude) as distance from menuentry e left join restaurant re on re.restaurant_id = e.restaurant_id left join menuentry w on w.restaurant_id = e.restaurant_id left join rating r on r.entry_id = e.entry_id left join rating v on v.entry_id = w.entry_id where to_tsvector('simple', w.name) @@ to_tsquery('simple', 'L:*') and to_tsvector('simple', e.name) @@ to_tsquery('simple', 'E:*')  group by e.entry_id, re.restaurant_id, w.entry_id having AVG(r.rating) > 1 and AVG(v.rating) > 1 order by distance(39.4693409, -0.3536466, re.latitude, re.longitude) limit 3;
 
-(r.allergens && $6::text[] == False) and
+select re.name, r.entry_id, distance(39.4693409, -0.3536466, re.latitude, re.longitude) as distance, r.ratedate from restaurant re left join menuentry e on re.restaurant_id = e.restaurant_id left join rating r on r.entry_id = e.entry_id where r.entry_id = ANY('{22211,22212}'::integer[]) and r.user_id = 'OhrHLQyJYeUTNWj70AjO3mZCepr2' order by r.ratedate asc limit 50 offset 0 rows;
+
 
 Café
 Afghan
