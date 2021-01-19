@@ -185,6 +185,62 @@ const getRatingsHistory = (request, response) => {
   )
 }
 
+const createList = (request, response) => {
+  const {user_id, name, image, type} = request.body
+
+  pool.query(
+    'INSERT INTO favoritelists(user_id, name, image, type) VALUES ($1, $2, $3, $4) RETURNING id',
+    [user_id, name, image, type],
+    (error, results) => {
+      if (error) {
+        throw error
+      }
+      response.status(200).json(results.rows)
+    }
+  )
+}
+
+const getLists = (request, response) => {
+  const {user_id} = request.body
+  pool.query(
+    `select * from favoritelists where user_id = $1 `,[user_id],
+    (error, results) => {
+      if (error) {
+        throw error
+      }
+      response.status(200).json(results.rows)
+    }
+  )
+}
+
+const updateList = (request, response) => {
+  const {id, name, image,  list} = request.body
+  pool.query(
+    'UPDATE favoritelists SET list = $2 WHERE id = $1',
+    [id, list],
+    (error, results) => {
+      if (error) {
+        throw error
+      }
+      response.status(201).send(`List updated with id: ${id}`)
+    }
+  )
+}
+
+const deleteList = (request, response) => {
+  const {id} = request.headers
+
+  pool.query(
+    `DELETE FROM favoritelists WHERE id = $1`,[id],
+    (error, results) => {
+      if (error) {
+        throw error
+      }
+      response.status(201).send(`List deleted with entry id: ${id}`)
+    }
+  )
+}
+
 module.exports = {
   getUserById,
   createUser,
@@ -199,5 +255,9 @@ module.exports = {
   deleteRating,
   checkMail,
   checkUsername,
-  getRatingsHistory
+  getRatingsHistory,
+  getLists,
+  createList,
+  updateList,
+  deleteList
 }
