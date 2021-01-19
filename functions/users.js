@@ -189,7 +189,7 @@ const createList = (request, response) => {
   const {user_id, name, image, type} = request.body
 
   pool.query(
-    'INSERT INTO favoritelists(user_id, name, image, type) VALUES ($1, $2, $3, $4) RETURNING id',
+    'INSERT INTO favoritelists(user_id, name, image, type, list) VALUES ($1, $2, $3, $4, array[]::text[]) RETURNING id',
     [user_id, name, image, type],
     (error, results) => {
       if (error) {
@@ -201,7 +201,7 @@ const createList = (request, response) => {
 }
 
 const getLists = (request, response) => {
-  const {user_id} = request.body
+  const {user_id} = request.headers
   pool.query(
     `select * from favoritelists where user_id = $1 `,[user_id],
     (error, results) => {
