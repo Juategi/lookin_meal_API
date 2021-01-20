@@ -40,7 +40,7 @@ else {
   app.get('/users', dbu.getUserById)
   app.get('/allusers', dbu.getUsers)
   app.get('/userfavs', dbu.getUserFavorites)
-  app.get('/allrestaurants', dbr.getRestaurants)
+  app.get('/restbyid', dbr.getRestaurantsById)
   app.get('/sections', dbr.getSections)
   app.get('/menus', dbr.getMenu)
   app.get('/rating', dbu.getRating)
