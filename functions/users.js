@@ -172,10 +172,10 @@ const getAllRatings = (request, response) => {
 }
 
 const getRatingsHistory = (request, response) => {
-  const {user_id, ratings, limit, offset} = request.headers;
+  const {user_id, ratings, limit, offset, latitude, longitude} = request.headers;
 
   pool.query(
-    `select re.*, r.entry_id, distance(39.4693409, -0.3536466, re.latitude, re.longitude) as distance from restaurant re left join menuentry e on re.restaurant_id = e.restaurant_id left join rating r on r.entry_id = e.entry_id where r.entry_id = ANY($2::integer[]) and r.user_id = $1 order by r.ratedate desc limit $3 offset $4 rows;`,[user_id, ratings, limit, offset],
+    `select re.*, r.entry_id, distance($5, $6, re.latitude, re.longitude) as distance from restaurant re left join menuentry e on re.restaurant_id = e.restaurant_id left join rating r on r.entry_id = e.entry_id where r.entry_id = ANY($2::integer[]) and r.user_id = $1 order by r.ratedate desc limit $3 offset $4 rows;`,[user_id, ratings, limit, offset, latitude, longitude],
     (error, results) => {
       if (error) {
         throw error

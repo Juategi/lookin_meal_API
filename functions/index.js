@@ -56,6 +56,7 @@ else {
   app.get('/ratingshistory', dbu.getRatingsHistory)
   app.get('/popular', dbr.getPopular)
   app.get('/lists', dbu.getLists)
+  app.get('/entriesbyid', dbr.getEntriesByIds)
   app.post('/users', dbu.createUser)
   app.post('/userfavs', dbu.addToUserFavorites)
   app.post('/restaurants', dbr.createRestaurant)

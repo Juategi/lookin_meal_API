@@ -220,6 +220,20 @@ const createRestaurant = (request, response) => {
     })
   }
 
+  const getEntriesByIds = (request, response) => {
+    const {ids, latitude, longitude} = request.headers;
+  
+    pool.query(
+      `select re.*, e.entry_id, distance($2, $3, re.latitude, re.longitude) as distance from restaurant re left join menuentry e on re.restaurant_id = e.restaurant_id where e.entry_id = ANY($1::integer[])`,[ids, latitude, longitude],
+      (error, results) => {
+        if (error) {
+          throw error
+        }
+        response.status(200).json(results.rows)
+      }
+    )
+  }
+
   module.exports = {
     createRestaurant,
     getRestaurantsById,
@@ -238,6 +252,7 @@ const createRestaurant = (request, response) => {
     updateDailyMenu,
     getRecently,
     updateRecently,
-    getPopular
+    getPopular,
+    getEntriesByIds
   }
 
