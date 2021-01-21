@@ -234,6 +234,19 @@ const createRestaurant = (request, response) => {
     )
   }
 
+  const getEntryRatings = (request, response) => {
+    const {entry_id} = request.headers;
+    pool.query(
+      `SELECT r.*, u.* FROM rating r left join users u on u.user_id = r.user_id WHERE r.entry_id = $1 order by r.ratedate desc limit 50`,[entry_id],
+      (error, results) => {
+        if (error) {
+          throw error
+        }
+        response.status(200).json(results.rows)
+      }
+    )
+  }
+
   module.exports = {
     createRestaurant,
     getRestaurantsById,
@@ -253,6 +266,7 @@ const createRestaurant = (request, response) => {
     getRecently,
     updateRecently,
     getPopular,
-    getEntriesByIds
+    getEntriesByIds,
+    getEntryRatings
   }
 
