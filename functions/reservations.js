@@ -62,6 +62,19 @@ const getReservationsDay = (request, response) => {
     )
 }
 
+const getReservationsUser = (request, response) => {
+    const {user_id, reservationdate} = request.headers;
+    pool.query(
+      `SELECT * from reservation where user_id = $1 and reservationdate >= $2::date`,[user_id, reservationdate],
+      (error, results) => {
+        if (error) {
+          throw error
+        }
+        response.status(200).json(results.rows)
+      }
+    )
+}
+
 
 const createReservation = (request, response) => {
     const {restaurant_id, user_id, table_id, people, reservationdate, reservationtime} = request.body
@@ -95,5 +108,6 @@ module.exports = {
     createReservation,
     deleteReservation,
     getTables,
-    getReservationsDay
+    getReservationsDay,
+    getReservationsUser
 }

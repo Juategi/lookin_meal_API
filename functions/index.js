@@ -10,6 +10,7 @@ const bodyParser = require('body-parser')
 const dbu = require('./users')
 const dbr = require('./restaurants')
 const dbs = require('./search')
+const dbrt = require('./reservations')
 const port = 4000
 const cCPUs   = require('os').cpus().length
 
@@ -77,6 +78,17 @@ else {
   app.delete('/rating', dbu.deleteRating)
   app.delete('/menus', dbr.deleteMenuEntry)
   app.delete('/lists', dbu.deleteList)
+
+  app.get('/tables', dbrt.getTables)
+  app.get('/reservationsday', dbrt.getReservationsDay)
+  app.get('/reservationsuser', dbrt.getReservationsUser)
+  app.post('/table', dbrt.createTable)
+  app.post('/reservation', dbrt.createReservation)
+  app.put('/table', dbrt.updateTable)
+  app.delete('/table', dbrt.deleteTable)
+  app.delete('/reservation', dbrt.deleteReservation)
+
+
 
   app.listen(port, () => {
     console.log(`App running on port ${port}.`)
