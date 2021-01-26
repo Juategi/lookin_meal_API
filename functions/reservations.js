@@ -31,7 +31,7 @@ const updateTable = (request, response) => {
       if (error) {
         throw error
       }
-      response.status(201).send(`Menu entry updated with name: ${name}`)
+      response.status(201).send(`Table updated with id: ${id}`)
     })
 }
 

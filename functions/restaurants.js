@@ -209,6 +209,17 @@ const createRestaurant = (request, response) => {
     })
   }
 
+  const updateMealTime = (request, response) => {
+    const {id, mealtime} = request.body
+    pool.query('UPDATE restaurant SET mealtime = $2 WHERE restaurant_id = $1',
+     [id, mealtime], (error, results) => {
+      if (error) {
+        throw error
+      }
+      response.status(201).send(`Mealtime updated from restaurant: ${id}`)
+    })
+  }
+
   const updateRestaurantData = (request, response) => {
     const {id,name,phone,website,address,types,schedule, delivery, currency} = request.body
     pool.query('UPDATE restaurant SET name = $2, phone = $3, website = $4, address = $5, types = $6, schedule = $7, delivery = $8, currency = $9 WHERE restaurant_id = $1',
@@ -267,6 +278,7 @@ const createRestaurant = (request, response) => {
     updateRecently,
     getPopular,
     getEntriesByIds,
-    getEntryRatings
+    getEntryRatings,
+    updateMealTime
   }
 

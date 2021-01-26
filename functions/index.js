@@ -74,6 +74,7 @@ else {
   app.put('/daily', dbr.updateDailyMenu)
   app.put('/recently', dbr.updateRecently)
   app.put('/lists', dbu.updateList)
+  app.put('/restaurantmeal', dbr.updateMealTime)
   app.delete('/userfavs', dbu.deleteFromUserFavorites)
   app.delete('/rating', dbu.deleteRating)
   app.delete('/menus', dbr.deleteMenuEntry)
