@@ -89,7 +89,9 @@ const createReservation = (request, response) => {
 
 const deleteReservation = (request, response) => {
     const {table_id, reservationdate, reservationtime} = request.headers
-  
+    console.log(table_id)
+    console.log(reservationdate)
+    console.log(reservationtime)
     pool.query(
       `DELETE FROM reservation WHERE table_id = $1 and reservationdate = $2 and reservationtime = $3`,[table_id, reservationdate, reservationtime],
       (error, results) => {
