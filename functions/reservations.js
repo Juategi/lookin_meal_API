@@ -52,7 +52,7 @@ const deleteTable = (request, response) => {
 const getReservationsDay = (request, response) => {
     const {restaurant_id, reservationdate} = request.headers;
     pool.query(
-      `SELECT * from reservation where restaurant_id = $1 and reservationdate = $2`,[restaurant_id, reservationdate],
+      `SELECT r.*, u.name from reservation r left join users u on r.user_id = u.user_id where r.restaurant_id = $1 and r.reservationdate = $2`,[restaurant_id, reservationdate],
       (error, results) => {
         if (error) {
           throw error
@@ -65,7 +65,7 @@ const getReservationsDay = (request, response) => {
 const getReservationsUser = (request, response) => {
     const {user_id, reservationdate} = request.headers;
     pool.query(
-      `SELECT * from reservation where user_id = $1 and reservationdate >= $2::date`,[user_id, reservationdate],
+      `SELECT e.*, r.name as restaurant_name from reservation e left join restaurant r on r.restaurant_id = e.restaurant_id where e.user_id = $1 and e.reservationdate >= $2::date`,[user_id, reservationdate],
       (error, results) => {
         if (error) {
           throw error
