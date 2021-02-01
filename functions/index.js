@@ -11,6 +11,8 @@ const dbu = require('./users')
 const dbr = require('./restaurants')
 const dbs = require('./search')
 const dbrt = require('./reservations')
+const dbc = require('./codes')
+
 const port = 4000
 const cCPUs   = require('os').cpus().length
 
@@ -88,6 +90,10 @@ else {
   app.put('/table', dbrt.updateTable)
   app.delete('/table', dbrt.deleteTable)
   app.delete('/reservation', dbrt.deleteReservation)
+
+  app.get('/codes', dbc.getCodes)
+  app.post('/codes', dbc.createCode)
+  app.delete('/codes', dbc.deleteCode)
 
 
 

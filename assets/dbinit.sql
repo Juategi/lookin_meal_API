@@ -20,6 +20,8 @@ create table tables (table_id serial PRIMARY KEY, restaurant_id integer not null
 
 create table reservation(user_id varchar(50)  NOT NULL, restaurant_id integer not null, table_id integer NOT NULL, people integer not null, reservationdate DATE not null, reservationtime varchar(10),  PRIMARY KEY (table_id, reservationdate, reservationtime), CONSTRAINT reservation_users_fkey FOREIGN KEY (user_id) REFERENCES users (user_id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE, CONSTRAINT reservation_table_fkey FOREIGN KEY (table_id) REFERENCES tables (table_id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE, CONSTRAINT restaurant_to_reservation_fkey FOREIGN KEY (restaurant_id) REFERENCES restaurant (restaurant_id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE); 
 
+create table code(code_id varchar(50) NOT NULL, restaurant_id integer not null, link text not null, PRIMARY KEY (code_id, restaurant_id), CONSTRAINT restaurant_to_code_fkey FOREIGN KEY (restaurant_id) REFERENCES restaurant (restaurant_id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE ); 
+
 commit;
 
 CREATE OR REPLACE FUNCTION distance(lat1 FLOAT, lon1 FLOAT, lat2 FLOAT, lon2 FLOAT) RETURNS FLOAT AS $$ DECLARE x float = 111.12 * (lat2 - lat1); y float = 111.12 * (lon2 - lon1) * cos(lat1 / 92.215); BEGIN RETURN sqrt(x * x + y * y); END $$ LANGUAGE plpgsql;
