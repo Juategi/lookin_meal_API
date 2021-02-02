@@ -3,7 +3,7 @@ const pool = require("./mypool").pool
 const getCodes = (request, response) => {
     const {restaurant_id} = request.headers;
     pool.query(
-      `SELECT * from codes where restaurant_id = $1`,[restaurant_id],
+      `SELECT * from code where restaurant_id = $1`,[restaurant_id],
       (error, results) => {
         if (error) {
           throw error
