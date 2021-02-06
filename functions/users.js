@@ -241,6 +241,62 @@ const deleteList = (request, response) => {
   )
 }
 
+const createOwner = (request, response) => {
+  const {user_id, restaurant_id, token} = request.body
+
+  pool.query(
+    'INSERT INTO owner(user_id, restaurant_id, token) VALUES ($1, $2, $3)',
+    [user_id, restaurant_id, token],
+    (error, results) => {
+      if (error) {
+        throw error
+      }
+      response.status(200).json(results.rows)
+    }
+  )
+}
+
+const getOwnerRestaurants = (request, response) => {
+  const {user_id} = request.headers
+  pool.query(
+    `select * from owner where user_id = $1 `,[user_id],
+    (error, results) => {
+      if (error) {
+        throw error
+      }
+      response.status(200).json(results.rows)
+    }
+  )
+}
+
+const getRestaurantOwners = (request, response) => {
+  const {user_id} = request.headers
+  pool.query(
+    `select * from owner where restaurant_id = $1 `,[user_id],
+    (error, results) => {
+      if (error) {
+        throw error
+      }
+      response.status(200).json(results.rows)
+    }
+  )
+}
+
+
+const deleteOwner = (request, response) => {
+  const {user_id, restaurant_id} = request.headers
+
+  pool.query(
+    `DELETE FROM owner WHERE user_id = $1 and restaurant_id = $2`,[user_id, restaurant_id],
+    (error, results) => {
+      if (error) {
+        throw error
+      }
+      response.status(201).send(`Owner deleted with entry id: ${user_id}`)
+    }
+  )
+}
+
 module.exports = {
   getUserById,
   createUser,
@@ -259,5 +315,9 @@ module.exports = {
   getLists,
   createList,
   updateList,
-  deleteList
+  deleteList,
+  createOwner,
+  getOwnerRestaurants,
+  getRestaurantOwners,
+  deleteOwner
 }

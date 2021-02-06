@@ -95,6 +95,11 @@ else {
   app.post('/codes', dbc.createCode)
   app.delete('/codes', dbc.deleteCode)
 
+  app.get('/owner', dbu.getOwnerRestaurants)
+  app.get('/ownerres', dbu.getRestaurantOwners)
+  app.post('/owner', dbu.createOwner)
+  app.delete('/owner', dbu.deleteOwner)
+
 
 
   app.listen(port, () => {
