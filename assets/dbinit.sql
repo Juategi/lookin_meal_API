@@ -59,6 +59,8 @@ select re.name, e.name, w.name, distance(39.4693409, -0.3536466, re.latitude, re
 
 select re.name, r.entry_id, distance(39.4693409, -0.3536466, re.latitude, re.longitude) as distance, r.ratedate from restaurant re left join menuentry e on re.restaurant_id = e.restaurant_id left join rating r on r.entry_id = e.entry_id where r.entry_id = ANY('{22211,22212}'::integer[]) and r.user_id = 'OhrHLQyJYeUTNWj70AjO3mZCepr2' order by r.ratedate asc limit 50 offset 0 rows;
 
+insert into owner(user_id, restaurant_id, token) values('I4z3wFH0SeTrVSqVtb8qAsXQijk1','833', 'dgBwyKEjRAyrRtLJs513Tk:APA91bFlDL2_SHOp14xGrOp0TfMF0Zy96mgLILaIV_SwupHVCc2KCyGxwWhCNRY07fMBekmkqsUVrzwD4SugVj7-vzaafE4oNFAZQosNRkdyUw63_JAnDPv_GjNui3leIUIWfkxjgQmG')
+
 
 Café
 Afghan

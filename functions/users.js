@@ -270,9 +270,9 @@ const getOwnerRestaurants = (request, response) => {
 }
 
 const getRestaurantOwners = (request, response) => {
-  const {user_id} = request.headers
+  const {restaurant_id} = request.headers
   pool.query(
-    `select * from owner where restaurant_id = $1 `,[user_id],
+    `select * from owner where restaurant_id = $1 `,[restaurant_id],
     (error, results) => {
       if (error) {
         throw error
