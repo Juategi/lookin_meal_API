@@ -31,11 +31,11 @@ const createUser = (request, response) => {
 }
 
 const updateUser = (request, response) => {
-  const {id, name, email, image, service} = request.body
+  const {id, name, about, image, service, country, username} = request.body
 
   pool.query(
-    'UPDATE users SET name = $1, email = $2, image = $3, service = $4 WHERE user_id = $5',
-    [name, email, image, service, id],
+    'UPDATE users SET name = $2, about = $3, image = $4, service = $5, country = $6, username = $7 WHERE user_id = $1',
+    [id, name, about, image, service, country, username],
     (error, results) => {
       if (error) {
         throw error
