@@ -100,6 +100,12 @@ else {
   app.post('/owner', dbu.createOwner)
   app.delete('/owner', dbu.deleteOwner)
 
+  app.get('/followers', dbu.getFollowers)
+  app.get('/following', dbu.getFollowing)
+  app.get('/numfollowers', dbu.getNumFollowers)
+  app.get('/numfollowing', dbu.getNumFollowing)
+  app.post('/follower', dbu.addFollower)
+  app.delete('/follower', dbu.deleteFollower)
 
 
   app.listen(port, () => {

@@ -22,6 +22,8 @@ create table reservation(user_id varchar(50)  NOT NULL, restaurant_id integer no
 
 create table code(code_id varchar(50) NOT NULL, restaurant_id integer not null, link text not null, PRIMARY KEY (code_id, restaurant_id), CONSTRAINT restaurant_to_code_fkey FOREIGN KEY (restaurant_id) REFERENCES restaurant (restaurant_id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE ); 
 
+create table followers(user_id varchar(100) not null, followerid varchar(100) not null, primary key(user_id, followerid), CONSTRAINT user_id_fkey FOREIGN KEY (user_id) REFERENCES users (user_id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE, CONSTRAINT follower_id_fkey FOREIGN KEY (followerid) REFERENCES users (user_id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE);
+
 commit;
 
 CREATE OR REPLACE FUNCTION distance(lat1 FLOAT, lon1 FLOAT, lat2 FLOAT, lon2 FLOAT) RETURNS FLOAT AS $$ DECLARE x float = 111.12 * (lat2 - lat1); y float = 111.12 * (lon2 - lon1) * cos(lat1 / 92.215); BEGIN RETURN sqrt(x * x + y * y); END $$ LANGUAGE plpgsql;

@@ -297,6 +297,83 @@ const deleteOwner = (request, response) => {
   )
 }
 
+
+const addFollower = (request, response) => {
+  const {userid, followerid} = request.body
+    pool.query('INSERT INTO followers (user_id,followerid) VALUES ($1,$2)', [userid,followerid], (error, results) => {
+      if (error) {
+        response.status(400).send(error)
+      }
+      else{
+        response.status(201).send(`Follower added with id: ${followerid}`)
+      }
+    })
+}
+
+const deleteFollower = (request, response) => {
+  const {userid,followerid} = request.headers
+    pool.query('DELETE FROM followers WHERE user_id = $1 and followerid = $2', [userid,followerid], (error, results) => {
+      if (error) {
+        response.status(400).send(error)
+      }
+      else{
+        response.status(201).send(`Follower deleted with id: ${followerid}`)
+      }
+    })
+}
+
+const getNumFollowing = (request, response) => {
+  const {userid} = request.headers;
+  const statement = 'SELECT count(f.followerid) as num FROM followers f, users u WHERE f.user_id = $1 and u.user_id = f.followerid'
+  pool.query(statement,[userid], (error, results) => {
+    if (error) {
+      response.status(400).send(error)
+    }
+    else{
+      response.status(200).json(results.rows)
+    }
+  })
+}
+
+const getNumFollowers = (request, response) => {
+  const {userid} = request.headers;
+  const statement = 'SELECT count(f.user_id) as num FROM followers f, users u WHERE f.followerid = $1 and u.user_id = f.user_id'
+  pool.query(statement,[userid], (error, results) => {
+    if (error) {
+      response.status(400).send(error)
+    }
+    else{
+      response.status(200).json(results.rows)
+    }
+  })
+}
+
+const getFollowing = (request, response) => {
+  const {userid} = request.headers;
+  const statement = 'SELECT f.followerid FROM followers f, users u WHERE f.user_id = $1 and u.user_id = f.followerid'
+  pool.query(statement,[userid], (error, results) => {
+    if (error) {
+      response.status(400).send(error)
+    }
+    else{
+      response.status(200).json(results.rows)
+    }
+  })
+}
+
+const getFollowers = (request, response) => {
+  const {userid} = request.headers;
+  const statement = 'SELECT f.user_id FROM followers f, users u WHERE f.followerid = $1 and u.user_id = f.user_id'
+  pool.query(statement,[userid], (error, results) => {
+    if (error) {
+      response.status(400).send(error)
+    }
+    else{
+      response.status(200).json(results.rows)
+    }
+  })
+}
+
 module.exports = {
   getUserById,
   createUser,
@@ -319,5 +396,11 @@ module.exports = {
   createOwner,
   getOwnerRestaurants,
   getRestaurantOwners,
-  deleteOwner
+  deleteOwner,
+  addFollower,
+  deleteFollower,
+  getNumFollowers,
+  getNumFollowing,
+  getFollowers,
+  getFollowing
 }
