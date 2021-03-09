@@ -258,6 +258,16 @@ const createRestaurant = (request, response) => {
     )
   }
 
+  const getOwned = (request, response) => {
+    const {user_id, latitude, longitude} = request.headers;
+    pool.query("SELECT r.*, distance($2, $3, latitude, longitude) as distance FROM restaurant r, owner o where o.user_id = $1 and r.restaurant_id = o.restaurant_id", [user_id, latitude, longitude], (error, results) => {
+      if (error) {
+        throw error
+      }
+      response.status(200).json(results.rows)
+    })
+  }
+
   module.exports = {
     createRestaurant,
     getRestaurantsById,
@@ -279,6 +289,7 @@ const createRestaurant = (request, response) => {
     getPopular,
     getEntriesByIds,
     getEntryRatings,
-    updateMealTime
+    updateMealTime,
+    getOwned
   }
 

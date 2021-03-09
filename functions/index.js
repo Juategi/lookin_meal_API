@@ -107,6 +107,8 @@ else {
   app.post('/follower', dbu.addFollower)
   app.delete('/follower', dbu.deleteFollower)
 
+  app.get('/owned', dbr.getOwned)
+
 
   app.listen(port, () => {
     console.log(`App running on port ${port}.`)
