@@ -12,6 +12,7 @@ const dbr = require('./restaurants')
 const dbs = require('./search')
 const dbrt = require('./reservations')
 const dbc = require('./codes')
+const dbrq = require('./requests')
 
 const port = 4000
 const cCPUs   = require('os').cpus().length
@@ -109,6 +110,10 @@ else {
 
   app.get('/owned', dbr.getOwned)
 
+  app.post('/emailsend', dbrq.sendConfirmationCode)
+  app.put('/emailresend', dbrq.reSendConfirmationCode)
+  app.post('/confirmcodes', dbrq.confirmCodes)
+  app.post('/request', dbrq.createRequest)
 
   app.listen(port, () => {
     console.log(`App running on port ${port}.`)
