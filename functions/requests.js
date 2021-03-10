@@ -84,7 +84,7 @@ const createRequest = (request, response) => {
       if (error) {
         throw error
       }
-      response.status(201).send(`Reservation created in table: ${table_id}`)
+      response.status(201).send(`Request created`)
     })
 }
 
