@@ -88,9 +88,23 @@ const createRequest = (request, response) => {
     })
 }
 
+const createRestaurantRequest = (request, response) => {
+    const {user_id, relation, name, phone, website, address, email, city, country, latitude, longitude, image, types, currency} = request.body
+    
+    pool.query('INSERT INTO restaurantcreation (user_id, relation, name, phone, website, address, email, city, country, latitude, longitude,image, types, currency) VALUES ($1, $2, $3, $4, $5,$6,$7,$8,$9,$10,$11,$12,$13, $14)',
+    [user_id, relation, name, phone, website, address, email, city, country, latitude, longitude,image, types, currency], (error, results) => {
+    if (error) {
+        throw error
+    }
+    response.status(200).json(results.rows)
+    })
+
+  }
+
 module.exports = {
     sendConfirmationCode,
     reSendConfirmationCode,
     confirmCodes,
-    createRequest
+    createRequest,
+    createRestaurantRequest
 }

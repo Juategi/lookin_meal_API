@@ -114,6 +114,7 @@ else {
   app.put('/emailresend', dbrq.reSendConfirmationCode)
   app.post('/confirmcodes', dbrq.confirmCodes)
   app.post('/request', dbrq.createRequest)
+  app.post('/requestrestaurant', dbrq.createRestaurantRequest)
 
   app.listen(port, () => {
     console.log(`App running on port ${port}.`)

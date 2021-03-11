@@ -12,7 +12,7 @@ create table favoriteentry(user_id varchar(50) NOT NULL, entry_id integer NOT NU
 
 create table favoritelists(id serial PRIMARY KEY, user_id varchar(50) NOT NULL, list text[], type varchar(10) not null, name varchar(100) not null, image text, CONSTRAINT favorites_users_fkey FOREIGN KEY (user_id) REFERENCES users (user_id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE); 
 
-create table owner(user_id varchar(50)  NOT NULL, restaurant_id integer NOT NULL, token text, PRIMARY KEY (user_id, restaurant_id), CONSTRAINT owner_restaurants_fkey FOREIGN KEY (restaurant_id) REFERENCES restaurant (restaurant_id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE, CONSTRAINT owner_users_fkey FOREIGN KEY (user_id) REFERENCES users (user_id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE); 
+create table owner(user_id varchar(50)  NOT NULL, restaurant_id integer NOT NULL, token text, type varchar(10), PRIMARY KEY (user_id, restaurant_id), CONSTRAINT owner_restaurants_fkey FOREIGN KEY (restaurant_id) REFERENCES restaurant (restaurant_id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE, CONSTRAINT owner_users_fkey FOREIGN KEY (user_id) REFERENCES users (user_id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE); 
 
 create table rating(user_id varchar(50)  NOT NULL, entry_id integer NOT NULL, rating real not null, ratedate DATE not null, comment text, PRIMARY KEY (user_id, entry_id), CONSTRAINT rating_menuentry_fkey FOREIGN KEY (entry_id) REFERENCES menuentry (entry_id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE, CONSTRAINT rating_users_fkey FOREIGN KEY (user_id) REFERENCES users (user_id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE); 
 
@@ -24,9 +24,11 @@ create table code(code_id varchar(50) NOT NULL, restaurant_id integer not null, 
 
 create table followers(user_id varchar(100) not null, followerid varchar(100) not null, primary key(user_id, followerid), CONSTRAINT user_id_fkey FOREIGN KEY (user_id) REFERENCES users (user_id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE, CONSTRAINT follower_id_fkey FOREIGN KEY (followerid) REFERENCES users (user_id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE);
 
-create table confirmations(code integer NOT NULL, localcode integer not null, codedate DATE not null, PRIMARY KEY (code, localcode)); 
+create table confirmations(code integer NOT NULL, localcode integer not null, codedate DATE not null, PRIMARY KEY (code, localcode));  
 
 create table requests(user_id varchar(50) NOT NULL, restaurant_id integer not null, confirmation varchar(10) not null, relation varchar(10) not null, idfront text, idback text, PRIMARY KEY (user_id, restaurant_id), CONSTRAINT requests_users_fkey FOREIGN KEY (user_id) REFERENCES users (user_id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE, CONSTRAINT restaurant_to_requests_fkey FOREIGN KEY (restaurant_id) REFERENCES restaurant (restaurant_id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE); 
+
+create table restaurantcreation(id serial PRIMARY KEY, user_id varchar(50) NOT NULL, relation varchar(10) not null, name VARCHAR (150) NOT NULL, address text NOT NULL, city VARCHAR (50) NOT NULL, country VARCHAR (50) NOT NULL, email VARCHAR (50), phone VARCHAR (50), website VARCHAR (150), currency varchar(5), types text[], image text, latitude real not null, longitude real not null, CONSTRAINT requests_users_fkey FOREIGN KEY (user_id) REFERENCES users (user_id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE); 
 
 commit;
 
