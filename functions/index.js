@@ -109,6 +109,7 @@ else {
   app.delete('/follower', dbu.deleteFollower)
 
   app.get('/owned', dbr.getOwned)
+  app.get('/owners', dbr.getOwners)
 
   app.post('/emailsend', dbrq.sendConfirmationCode)
   app.put('/emailresend', dbrq.reSendConfirmationCode)
