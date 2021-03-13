@@ -242,11 +242,11 @@ const deleteList = (request, response) => {
 }
 
 const createOwner = (request, response) => {
-  const {user_id, restaurant_id, token} = request.body
+  const {user_id, restaurant_id, token, type} = request.body
 
   pool.query(
-    'INSERT INTO owner(user_id, restaurant_id, token) VALUES ($1, $2, $3)',
-    [user_id, restaurant_id, token],
+    'INSERT INTO owner(user_id, restaurant_id, token, type) VALUES ($1, $2, $3, $4)',
+    [user_id, restaurant_id, token, type],
     (error, results) => {
       if (error) {
         throw error
