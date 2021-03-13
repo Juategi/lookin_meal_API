@@ -268,15 +268,6 @@ const createRestaurant = (request, response) => {
     })
   }
 
-  const getOwners = (request, response) => {
-    const {restaurant_id} = request.headers;
-    pool.query("SELECT u.*, o.type from users u, owner o where o.restaurant_id = $1 and o.user_id = u.user_id;", [restaurant_id], (error, results) => {
-      if (error) {
-        throw error
-      }
-      response.status(200).json(results.rows)
-    })
-  }
 
   module.exports = {
     createRestaurant,
@@ -301,6 +292,5 @@ const createRestaurant = (request, response) => {
     getEntryRatings,
     updateMealTime,
     getOwned,
-    getOwners
   }
 

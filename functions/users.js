@@ -256,23 +256,11 @@ const createOwner = (request, response) => {
   )
 }
 
-const getOwnerRestaurants = (request, response) => {
-  const {user_id} = request.headers
-  pool.query(
-    `select * from owner where user_id = $1 `,[user_id],
-    (error, results) => {
-      if (error) {
-        throw error
-      }
-      response.status(200).json(results.rows)
-    }
-  )
-}
 
 const getRestaurantOwners = (request, response) => {
   const {restaurant_id} = request.headers
   pool.query(
-    `select * from owner where restaurant_id = $1 `,[restaurant_id],
+    `select o.*, u.username from owner o, users u where o.restaurant_id = $1 and o.user_id = u.user_id`,[restaurant_id],
     (error, results) => {
       if (error) {
         throw error
@@ -394,7 +382,6 @@ module.exports = {
   updateList,
   deleteList,
   createOwner,
-  getOwnerRestaurants,
   getRestaurantOwners,
   deleteOwner,
   addFollower,
