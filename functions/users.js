@@ -11,6 +11,17 @@ const getUserById = (request, response) => {
   })
 }
 
+const getUserByUsername = (request, response) => {
+  const {username} = request.headers;
+  const statement = `SELECT * FROM users WHERE username = $1 `
+  pool.query(statement,[username], (error, results) => {
+    if (error) {
+      throw error
+    }
+    response.status(200).json(results.rows)
+  })
+}
+
 const getUsers = (request, response) => {
   pool.query('SELECT * FROM users', (error, results) => {
     if (error) {
@@ -285,6 +296,20 @@ const deleteOwner = (request, response) => {
   )
 }
 
+const updateOwner = (request, response) => {
+  const {user_id, type, token, restaurant_id} = request.body
+  pool.query(
+    'UPDATE owner SET type = $2, token = $3 WHERE user_id = $1 and restaurant_id = $4',
+    [user_id, type, token, restaurant_id],
+    (error, results) => {
+      if (error) {
+        throw error
+      }
+      response.status(201).send(`Owner updated with id: ${user_id}`)
+    }
+  )
+}
+
 
 const addFollower = (request, response) => {
   const {userid, followerid} = request.body
@@ -389,5 +414,7 @@ module.exports = {
   getNumFollowers,
   getNumFollowing,
   getFollowers,
-  getFollowing
+  getFollowing,
+  getUserByUsername,
+  updateOwner
 }

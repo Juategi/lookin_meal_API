@@ -42,6 +42,7 @@ else {
   )
 
   app.get('/users', dbu.getUserById)
+  app.get('/username', dbu.getUserByUsername)
   app.get('/allusers', dbu.getUsers)
   app.get('/userfavs', dbu.getUserFavorites)
   app.get('/restbyid', dbr.getRestaurantsById)
@@ -99,6 +100,7 @@ else {
   app.get('/ownerres', dbu.getRestaurantOwners)
   app.post('/owner', dbu.createOwner)
   app.delete('/owner', dbu.deleteOwner)
+  app.put('/owner', dbu.updateOwner)
 
   app.get('/followers', dbu.getFollowers)
   app.get('/following', dbu.getFollowing)
