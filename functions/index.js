@@ -117,6 +117,8 @@ else {
   app.post('/request', dbrq.createRequest)
   app.post('/requestrestaurant', dbrq.createRestaurantRequest)
 
+  app.post('/ticket', dbu.createTicket)
+
   app.listen(port, () => {
     console.log(`App running on port ${port}.`)
   })

@@ -387,6 +387,18 @@ const getFollowers = (request, response) => {
   })
 }
 
+const createTicket = (request, response) => {
+  const {userid, ticket, type} = request.body
+    pool.query('INSERT INTO ticket (userid, ticket, type) VALUES ($1,$2,$3)', [userid, ticket, type], (error, results) => {
+      if (error) {
+        response.status(400).send(error)
+      }
+      else{
+        response.status(201).send(`Ticket created for user: ${userid}`)
+      }
+    })
+}
+
 module.exports = {
   getUserById,
   createUser,
@@ -416,5 +428,6 @@ module.exports = {
   getFollowers,
   getFollowing,
   getUserByUsername,
-  updateOwner
+  updateOwner,
+  createTicket
 }

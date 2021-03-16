@@ -30,6 +30,8 @@ create table requests(user_id varchar(50) NOT NULL, restaurant_id integer not nu
 
 create table restaurantcreation(id serial PRIMARY KEY, user_id varchar(50) NOT NULL, relation varchar(10) not null, name VARCHAR (150) NOT NULL, address text NOT NULL, city VARCHAR (50) NOT NULL, country VARCHAR (50) NOT NULL, email VARCHAR (50), phone VARCHAR (50), website VARCHAR (150), currency varchar(5), types text[], image text, latitude real not null, longitude real not null, CONSTRAINT requests_users_fkey FOREIGN KEY (user_id) REFERENCES users (user_id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE); 
 
+create table ticket(id serial PRIMARY KEY, user_id varchar(50) NOT NULL, ticket text not null, type VARCHAR(10) NOT NULL, CONSTRAINT ticket_users_fkey FOREIGN KEY (user_id) REFERENCES users (user_id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE); 
+
 commit;
 
 CREATE OR REPLACE FUNCTION distance(lat1 FLOAT, lon1 FLOAT, lat2 FLOAT, lon2 FLOAT) RETURNS FLOAT AS $$ DECLARE x float = 111.12 * (lat2 - lat1); y float = 111.12 * (lon2 - lon1) * cos(lat1 / 92.215); BEGIN RETURN sqrt(x * x + y * y); END $$ LANGUAGE plpgsql;
