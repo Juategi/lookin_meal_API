@@ -6,6 +6,7 @@ const helmet = require('helmet')
 const compression = require('compression')
 const cluster = require('cluster')
 const bodyParser = require('body-parser')
+const cors = require('cors');
 
 const dbu = require('./users')
 const dbr = require('./restaurants')
@@ -32,6 +33,7 @@ if( cluster.isMaster ) {
 }
 else {
   const app = express()
+  app.use(cors());
   app.use(compression())
   app.use(helmet())
   app.use(bodyParser.json())
@@ -118,6 +120,9 @@ else {
   app.post('/requestrestaurant', dbrq.createRestaurantRequest)
 
   app.post('/ticket', dbu.createTicket)
+
+  app.get('/topentry', dbr.getTopEntries)
+  app.get('/toprestaurant', dbr.getTopRestaurants)
 
   app.listen(port, () => {
     console.log(`App running on port ${port}.`)

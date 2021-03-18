@@ -64,6 +64,26 @@ const createRestaurant = (request, response) => {
     })
   }
 
+  const getTopRestaurants = (request, response) => {
+    const {latitude, longitude} = request.headers;
+    pool.query("select re.*, distance($1, $2, re.latitude, re.longitude) from restaurant re, menuentry e, rating r where distance($1, $2, re.latitude, re.longitude) < 20.0 and re.restaurant_id = e.restaurant_id and r.entry_id = e.entry_id group by re.restaurant_id order by (COUNT(r)*5*0.5/1000 + AVG(r.rating)*0.5) desc limit 8", [latitude, longitude], (error, results) => {
+      if (error) {
+        throw error
+      }
+      response.status(200).json(results.rows)
+    })
+  }
+
+  const getTopEntries = (request, response) => {
+    const {latitude, longitude} = request.headers;
+    pool.query("select re.*, e.entry_id, distance($1, $2, re.latitude, re.longitude) as distance, AVG(r.rating) as rating, COUNT(r) as numreviews from restaurant re, menuentry e, rating r where distance($1, $2, re.latitude, re.longitude) < 20.0 and re.restaurant_id = e.restaurant_id and r.entry_id = e.entry_id group by e.entry_id, re.restaurant_id order by (COUNT(r)*5*0.5/1000 + AVG(r.rating)*0.5) desc limit 8", [latitude, longitude], (error, results) => {
+      if (error) {
+        throw error
+      }
+      response.status(200).json(results.rows)
+    })
+  }
+
   const getRestaurantsFromDistance = (request, response) => {
     const {latitude, longitude, city} = request.headers;
     pool.query('select *, distance($1, $2, latitude, longitude) as distance from restaurant order by distance asc limit 8;',
@@ -292,5 +312,7 @@ const createRestaurant = (request, response) => {
     getEntryRatings,
     updateMealTime,
     getOwned,
+    getTopEntries,
+    getTopRestaurants
   }
 
