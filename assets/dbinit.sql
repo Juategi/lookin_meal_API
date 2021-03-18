@@ -71,6 +71,9 @@ select re.name, r.entry_id, distance(39.4693409, -0.3536466, re.latitude, re.lon
 
 INSERT INTO followers (user_id,followerid) VALUES ('J688cdgAgkNfoRdzPJXQppoP63z1','IRXn03jYuHN9WN51kPRRh0xQUa03');
 
+select re.name, (COUNT(r)*5*0.5/1000 + AVG(r.rating)*0.5) as points, distance(39.4693409, -0.3536466, re.latitude, re.longitude) from restaurant re, menuentry e, rating r where distance(39.4693409, -0.3536466, re.latitude, re.longitude) < 20.0 and re.restaurant_id = e.restaurant_id and r.entry_id = e.entry_id group by re.restaurant_id order by (COUNT(r)*5*0.5/1000 + AVG(r.rating)*0.5) desc limit 8;
+
+select re.name, e.name, (COUNT(r)*5*0.5/1000 + AVG(r.rating)*0.5) as points, distance(39.4693409, -0.3536466, re.latitude, re.longitude) as distance, AVG(r.rating) as rating, COUNT(r) as numreviews from restaurant re, menuentry e, rating r where distance(39.4693409, -0.3536466, re.latitude, re.longitude) < 20.0 and re.restaurant_id = e.restaurant_id and r.entry_id = e.entry_id group by e.entry_id, re.restaurant_id order by (COUNT(r)*5*0.5/1000 + AVG(r.rating)*0.5) desc limit 8;
 
 Café
 Afghan
