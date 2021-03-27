@@ -400,6 +400,45 @@ const createTicket = (request, response) => {
     })
 }
 
+
+
+const addNotification = (request, response) => {
+  const {userid, restaurant_id, body, type} = request.body
+    pool.query('INSERT INTO notifications (user_id, restaurant_id, body, type) VALUES ($1,$2, $3, $4)', [userid, restaurant_id, body, type], (error, results) => {
+      if (error) {
+        response.status(400).send(error)
+      }
+      else{
+        response.status(201).send(`Notification added with id: ${user_id}`)
+      }
+    })
+}
+
+const deleteNotification = (request, response) => {
+  const {id} = request.headers
+    pool.query('DELETE FROM followers WHERE id = $1', [id], (error, results) => {
+      if (error) {
+        response.status(400).send(error)
+      }
+      else{
+        response.status(201).send(`Notification deleted with id: ${id}`)
+      }
+    })
+}
+
+const getNotifications = (request, response) => {
+  const {userid} = request.headers;
+  const statement = 'SELECT n.*, r.name FROM notifications n, restaurant r WHERE user_id = $1 and r.restaurant_id = n.restaurant_id'
+  pool.query(statement,[userid], (error, results) => {
+    if (error) {
+      response.status(400).send(error)
+    }
+    else{
+      response.status(200).json(results.rows)
+    }
+  })
+}
+
 module.exports = {
   getUserById,
   createUser,
@@ -430,5 +469,8 @@ module.exports = {
   getFollowing,
   getUserByUsername,
   updateOwner,
-  createTicket
+  createTicket,
+  addNotification, 
+  deleteNotification,
+  getNotifications
 }

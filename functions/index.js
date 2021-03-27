@@ -128,6 +128,10 @@ else {
   app.delete('/excluded', dbrt.deleteExcluded)
   app.post('/excluded', dbrt.addExcluded)
 
+  app.get('/notifications', dbu.getNotifications)
+  app.delete('/notifications', dbu.deleteNotification)
+  app.post('/notifications', dbu.addNotification)
+
   app.listen(port, () => {
     console.log(`App running on port ${port}.`)
   })
