@@ -403,8 +403,8 @@ const createTicket = (request, response) => {
 
 
 const addNotification = (request, response) => {
-  const {userid, restaurant_id, body, type} = request.body
-    pool.query('INSERT INTO notifications (user_id, restaurant_id, body, type) VALUES ($1,$2, $3, $4)', [userid, restaurant_id, body, type], (error, results) => {
+  const {user_id, restaurant_id, body, type} = request.body
+    pool.query('INSERT INTO notifications (user_id, restaurant_id, body, type) VALUES ($1,$2, $3, $4)', [user_id, restaurant_id, body, type], (error, results) => {
       if (error) {
         response.status(400).send(error)
       }
@@ -416,7 +416,7 @@ const addNotification = (request, response) => {
 
 const deleteNotification = (request, response) => {
   const {id} = request.headers
-    pool.query('DELETE FROM followers WHERE id = $1', [id], (error, results) => {
+    pool.query('DELETE FROM notifications WHERE id = $1', [id], (error, results) => {
       if (error) {
         response.status(400).send(error)
       }
@@ -427,9 +427,9 @@ const deleteNotification = (request, response) => {
 }
 
 const getNotifications = (request, response) => {
-  const {userid} = request.headers;
+  const {user_id} = request.headers;
   const statement = 'SELECT n.*, r.name FROM notifications n, restaurant r WHERE user_id = $1 and r.restaurant_id = n.restaurant_id'
-  pool.query(statement,[userid], (error, results) => {
+  pool.query(statement,[user_id], (error, results) => {
     if (error) {
       response.status(400).send(error)
     }
