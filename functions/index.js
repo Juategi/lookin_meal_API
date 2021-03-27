@@ -124,6 +124,10 @@ else {
   app.get('/topentry', dbr.getTopEntries)
   app.get('/toprestaurant', dbr.getTopRestaurants)
 
+  app.get('/excluded', dbrt.getExcluded)
+  app.delete('/excluded', dbrt.deleteExcluded)
+  app.post('/excluded', dbrt.addExcluded)
+
   app.listen(port, () => {
     console.log(`App running on port ${port}.`)
   })

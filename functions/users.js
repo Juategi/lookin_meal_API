@@ -3,6 +3,7 @@ const pool = require("./mypool").pool
 const getUserById = (request, response) => {
   const {id} = request.headers;
   const statement = `SELECT * FROM users WHERE user_id = $1 `
+  console.log(id)
   pool.query(statement,[id], (error, results) => {
     if (error) {
       throw error

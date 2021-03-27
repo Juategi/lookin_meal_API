@@ -89,9 +89,6 @@ const createReservation = (request, response) => {
 
 const deleteReservation = (request, response) => {
     const {table_id, reservationdate, reservationtime} = request.headers
-    console.log(table_id)
-    console.log(reservationdate)
-    console.log(reservationtime)
     pool.query(
       `DELETE FROM reservation WHERE table_id = $1 and reservationdate = $2 and reservationtime = $3`,[table_id, reservationdate, reservationtime],
       (error, results) => {
@@ -103,6 +100,46 @@ const deleteReservation = (request, response) => {
     )
 }
 
+const getExcluded = (request, response) => {
+  const {restaurant_id} = request.headers;
+  pool.query(
+    `SELECT excludeddate from excludeddays where restaurant_id = $1`,[restaurant_id],
+    (error, results) => {
+      if (error) {
+        throw error
+      }
+      response.status(200).json(results.rows)
+    }
+  )
+}
+
+
+const addExcluded = (request, response) => {
+  const {restaurant_id, excludeddate} = request.body
+  pool.query('INSERT INTO excludeddays (restaurant_id, excludeddate) VALUES ($1, $2)',
+   [restaurant_id, excludeddate], (error, results) => {
+    if (error) {
+      throw error
+    }
+    response.status(201).send(`Day added: ${excludeddate}`)
+  })
+}
+
+const deleteExcluded = (request, response) => {
+  const {restaurant_id, excludeddate} = request.headers
+  pool.query(
+    `DELETE FROM excludeddays WHERE restaurant_id = $1 and excludeddate = $2`,[restaurant_id, excludeddate],
+    (error, results) => {
+      if (error) {
+        throw error
+      }
+      response.status(201).send(`Day deleted: ${excludeddate}`)
+    }
+  )
+}
+
+
+
 module.exports = {
     createTable,
     deleteTable,
@@ -111,5 +148,8 @@ module.exports = {
     deleteReservation,
     getTables,
     getReservationsDay,
-    getReservationsUser
+    getReservationsUser,
+    addExcluded,
+    deleteExcluded,
+    getExcluded
 }

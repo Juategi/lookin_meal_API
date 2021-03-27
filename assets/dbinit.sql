@@ -32,6 +32,8 @@ create table restaurantcreation(id serial PRIMARY KEY, user_id varchar(50) NOT N
 
 create table ticket(id serial PRIMARY KEY, user_id varchar(50) NOT NULL, ticket text not null, type VARCHAR(10) NOT NULL, CONSTRAINT ticket_users_fkey FOREIGN KEY (user_id) REFERENCES users (user_id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE); 
 
+create table excludeddays(restaurant_id integer not null, excludeddate DATE not null,   PRIMARY KEY (restaurant_id, excludeddate), CONSTRAINT restaurant_to_excluded_fkey FOREIGN KEY (restaurant_id) REFERENCES restaurant (restaurant_id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE);
+
 commit;
 
 CREATE OR REPLACE FUNCTION distance(lat1 FLOAT, lon1 FLOAT, lat2 FLOAT, lon2 FLOAT) RETURNS FLOAT AS $$ DECLARE x float = 111.12 * (lat2 - lat1); y float = 111.12 * (lon2 - lon1) * cos(lat1 / 92.215); BEGIN RETURN sqrt(x * x + y * y); END $$ LANGUAGE plpgsql;
