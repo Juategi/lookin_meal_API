@@ -132,6 +132,8 @@ else {
   app.delete('/notifications', dbu.deleteNotification)
   app.post('/notifications', dbu.addNotification)
 
+  app.put('/token', dbu.updateToken)
+
   app.listen(port, () => {
     console.log(`App running on port ${port}.`)
   })

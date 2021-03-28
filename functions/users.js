@@ -254,11 +254,11 @@ const deleteList = (request, response) => {
 }
 
 const createOwner = (request, response) => {
-  const {user_id, restaurant_id, token, type} = request.body
+  const {user_id, restaurant_id, type} = request.body
 
   pool.query(
-    'INSERT INTO owner(user_id, restaurant_id, token, type) VALUES ($1, $2, $3, $4)',
-    [user_id, restaurant_id, token, type],
+    'INSERT INTO owner(user_id, restaurant_id, type) VALUES ($1, $2, $3)',
+    [user_id, restaurant_id, type],
     (error, results) => {
       if (error) {
         throw error
@@ -272,7 +272,7 @@ const createOwner = (request, response) => {
 const getRestaurantOwners = (request, response) => {
   const {restaurant_id} = request.headers
   pool.query(
-    `select o.*, u.username from owner o, users u where o.restaurant_id = $1 and o.user_id = u.user_id`,[restaurant_id],
+    `select o.*, u.username, u.token from owner o, users u where o.restaurant_id = $1 and o.user_id = u.user_id`,[restaurant_id],
     (error, results) => {
       if (error) {
         throw error
@@ -298,10 +298,10 @@ const deleteOwner = (request, response) => {
 }
 
 const updateOwner = (request, response) => {
-  const {user_id, type, token, restaurant_id} = request.body
+  const {user_id, type, restaurant_id} = request.body
   pool.query(
-    'UPDATE owner SET type = $2, token = $3 WHERE user_id = $1 and restaurant_id = $4',
-    [user_id, type, token, restaurant_id],
+    'UPDATE owner SET type = $2, WHERE user_id = $1 and restaurant_id = $3',
+    [user_id, type, restaurant_id],
     (error, results) => {
       if (error) {
         throw error
@@ -439,6 +439,20 @@ const getNotifications = (request, response) => {
   })
 }
 
+const updateToken = (request, response) => {
+  const {user_id, token} = request.body
+  pool.query(
+    'UPDATE users SET token = $2 WHERE user_id = $1',
+    [user_id, token],
+    (error, results) => {
+      if (error) {
+        throw error
+      }
+      response.status(201).send(`Token updated with id: ${user_id}`)
+    }
+  )
+}
+
 module.exports = {
   getUserById,
   createUser,
@@ -472,5 +486,6 @@ module.exports = {
   createTicket,
   addNotification, 
   deleteNotification,
-  getNotifications
+  getNotifications,
+  updateToken
 }
