@@ -79,6 +79,10 @@ select re.name, (COUNT(r)*5*0.5/1000 + AVG(r.rating)*0.5) as points, distance(39
 
 select re.name, e.name, (COUNT(r)*5*0.5/1000 + AVG(r.rating)*0.5) as points, distance(39.4693409, -0.3536466, re.latitude, re.longitude) as distance, AVG(r.rating) as rating, COUNT(r) as numreviews from restaurant re, menuentry e, rating r where distance(39.4693409, -0.3536466, re.latitude, re.longitude) < 20.0 and re.restaurant_id = e.restaurant_id and r.entry_id = e.entry_id group by e.entry_id, re.restaurant_id order by (COUNT(r)*5*0.5/1000 + AVG(r.rating)*0.5) desc limit 8;
 
+select re.*, distance(39.4693409, -0.3536466, re.latitude, re.longitude) from restaurant re, menuentry e, rating r, user u where distance(39.4693409, -0.3536466, re.latitude, re.longitude) < 20.0 and re.restaurant_id = e.restaurant_id and r.entry_id = e.entry_id and u.user_id = 'I4z3wFH0SeTrVSqVtb8qAsXQijk1' group by re.restaurant_id order by (COUNT(r)*5*0.5/1000 + AVG(r.rating)*0.5) desc limit 12
+
+select re.name, distance(39.4693409, -0.3536466, re.latitude, re.longitude) as distance from restaurant re left join menuentry e on re.restaurant_id = e.restaurant_id left join rating r on r.entry_id = e.entry_id where distance(39.4693409, -0.3536466, re.latitude, re.longitude) < 20.0  and re.types && array(select distinct unnest(re.types) from restaurant re left join menuentry e on re.restaurant_id = e.restaurant_id left join rating r on r.entry_id = e.entry_id where r.user_id = 'I4z3wFH0SeTrVSqVtb8qAsXQijk1' and r.ratedate > current_date - 30) and not re.restaurant_id =ANY(array(select distinct re.restaurant_id from restaurant re left join menuentry e on re.restaurant_id = e.restaurant_id left join rating r on r.entry_id = e.entry_id where r.user_id = 'I4z3wFH0SeTrVSqVtb8qAsXQijk1' and r.ratedate > current_date - 30)) group by re.restaurant_id order by (COUNT(r)*5*0.5/1000 + AVG(r.rating)*0.5) desc limit 12;
+
 Café
 Afghan
 Afghani

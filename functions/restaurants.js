@@ -86,7 +86,7 @@ const createRestaurant = (request, response) => {
 
   const getRestaurantsFromDistance = (request, response) => {
     const {latitude, longitude, city} = request.headers;
-    pool.query('select *, distance($1, $2, latitude, longitude) as distance from restaurant order by distance asc limit 8;',
+    pool.query('select *, distance($1, $2, latitude, longitude) as distance from restaurant order by distance asc limit 12;',
     [latitude, longitude], (error, results) => {
       if (error) {
         throw error
@@ -99,6 +99,16 @@ const createRestaurant = (request, response) => {
     const {latitude, longitude, la1, la2, lo1, lo2} = request.headers;
     pool.query('select *, distance($1, $2, latitude, longitude) as distance from restaurant where latitude >= $3 and latitude <= $4 and longitude >= $5 and longitude <= $6',
     [latitude, longitude, la1, la2, lo1, lo2], (error, results) => {
+      if (error) {
+        throw error
+      }
+      response.status(200).json(results.rows)
+    })
+  }
+
+  const getRecommended = (request, response) => {
+    const {latitude, longitude, user_id} = request.headers;
+    pool.query("select re.*, distance($1, $2, re.latitude, re.longitude) as distance from restaurant re left join menuentry e on re.restaurant_id = e.restaurant_id left join rating r on r.entry_id = e.entry_id where distance($1, $2, re.latitude, re.longitude) < 20.0  and re.types && array(select distinct unnest(re.types) from restaurant re left join menuentry e on re.restaurant_id = e.restaurant_id left join rating r on r.entry_id = e.entry_id where r.user_id = $3 and r.ratedate > current_date - 30) and not re.restaurant_id =ANY(array(select distinct re.restaurant_id from restaurant re left join menuentry e on re.restaurant_id = e.restaurant_id left join rating r on r.entry_id = e.entry_id where r.user_id = $3 and r.ratedate > current_date - 30)) group by re.restaurant_id order by (COUNT(r)*5*0.5/1000 + AVG(r.rating)*0.5) desc limit 12", [latitude, longitude, user_id], (error, results) => {
       if (error) {
         throw error
       }
@@ -313,6 +323,7 @@ const createRestaurant = (request, response) => {
     updateMealTime,
     getOwned,
     getTopEntries,
-    getTopRestaurants
+    getTopRestaurants,
+    getRecommended
   }
 

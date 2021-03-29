@@ -62,6 +62,7 @@ else {
   app.get('/recently', dbr.getRecently)
   app.get('/ratingshistory', dbu.getRatingsHistory)
   app.get('/popular', dbr.getPopular)
+  app.get('/recommended', dbr.getRecommended)
   app.get('/lists', dbu.getLists)
   app.get('/entriesbyid', dbr.getEntriesByIds)
   app.get('/comments', dbr.getEntryRatings)
