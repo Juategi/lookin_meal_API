@@ -14,6 +14,7 @@ const dbs = require('./search')
 const dbrt = require('./reservations')
 const dbc = require('./codes')
 const dbrq = require('./requests')
+const dbn = require('./nanonets')
 
 const port = 4000
 const cCPUs   = require('os').cpus().length
@@ -36,10 +37,12 @@ else {
   app.use(cors());
   app.use(compression())
   app.use(helmet())
-  app.use(bodyParser.json())
+  app.use(bodyParser.json({limit: '1gb'}))
   app.use(
   bodyParser.urlencoded({
       extended: true,
+      limit: '1gb',
+      parameterLimit:5000000000000
     })
   )
 
@@ -134,6 +137,8 @@ else {
   app.post('/notifications', dbu.addNotification)
 
   app.put('/token', dbu.updateToken)
+
+  app.post('/nanonets', dbn.sendFile)
 
   app.listen(port, () => {
     console.log(`App running on port ${port}.`)
