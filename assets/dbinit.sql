@@ -36,6 +36,8 @@ create table excludeddays(restaurant_id integer not null, excludeddate DATE not 
 
 create table notifications(id serial PRIMARY KEY, restaurant_id integer not null, user_id varchar(50) NOT NULL, body text, type varchar(10), CONSTRAINT restaurant_notifications__fkey FOREIGN KEY (restaurant_id) REFERENCES restaurant (restaurant_id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE, CONSTRAINT notifications_users_fkey FOREIGN KEY (user_id) REFERENCES users (user_id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE);
 
+create table pdfrequest(user_id varchar(50)  NOT NULL, restaurant_id integer not null, PRIMARY KEY (restaurant_id, user_id), CONSTRAINT pdfrequest_users_fkey FOREIGN KEY (user_id) REFERENCES users (user_id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE, CONSTRAINT restaurant_to_pdfrequest_fkey FOREIGN KEY (restaurant_id) REFERENCES restaurant (restaurant_id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE); 
+
 commit;
 
 CREATE OR REPLACE FUNCTION distance(lat1 FLOAT, lon1 FLOAT, lat2 FLOAT, lon2 FLOAT) RETURNS FLOAT AS $$ DECLARE x float = 111.12 * (lat2 - lat1); y float = 111.12 * (lon2 - lon1) * cos(lat1 / 92.215); BEGIN RETURN sqrt(x * x + y * y); END $$ LANGUAGE plpgsql;

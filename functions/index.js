@@ -139,6 +139,7 @@ else {
   app.put('/token', dbu.updateToken)
 
   app.post('/nanonets', dbn.sendFile)
+  app.get('/nanonets', dbn.checkRequest)
 
   app.listen(port, () => {
     console.log(`App running on port ${port}.`)
