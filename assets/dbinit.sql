@@ -38,6 +38,15 @@ create table notifications(id serial PRIMARY KEY, restaurant_id integer not null
 
 create table pdfrequest(user_id varchar(50)  NOT NULL, restaurant_id integer not null, PRIMARY KEY (restaurant_id, user_id), CONSTRAINT pdfrequest_users_fkey FOREIGN KEY (user_id) REFERENCES users (user_id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE, CONSTRAINT restaurant_to_pdfrequest_fkey FOREIGN KEY (restaurant_id) REFERENCES restaurant (restaurant_id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE); 
 
+
+create table prices(type varchar(10) NOT NULL, quantity integer not null, price float not null, PRIMARY KEY (type, quantity));
+
+create table sponsor(restaurant_id integer not null, clicks integer not null, PRIMARY KEY (restaurant_id), CONSTRAINT restaurant_sponsor__fkey FOREIGN KEY (restaurant_id) REFERENCES restaurant (restaurant_id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE);
+
+create table premium(restaurant_id integer not null, sponshorshiptime date not null, PRIMARY KEY (restaurant_id), CONSTRAINT restaurant_premium__fkey FOREIGN KEY (restaurant_id) REFERENCES restaurant (restaurant_id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE);
+
+create table payment(id serial PRIMARY KEY, restaurant_id integer not null, user_id varchar(50) NOT NULL, paymentdate DATE not null, price float not null, service VARCHAR(50) not null, description text not null,  CONSTRAINT restaurant_payment__fkey FOREIGN KEY (restaurant_id) REFERENCES restaurant (restaurant_id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE, CONSTRAINT payment_users_fkey FOREIGN KEY (user_id) REFERENCES users (user_id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE);
+
 commit;
 
 CREATE OR REPLACE FUNCTION distance(lat1 FLOAT, lon1 FLOAT, lat2 FLOAT, lon2 FLOAT) RETURNS FLOAT AS $$ DECLARE x float = 111.12 * (lat2 - lat1); y float = 111.12 * (lon2 - lon1) * cos(lat1 / 92.215); BEGIN RETURN sqrt(x * x + y * y); END $$ LANGUAGE plpgsql;

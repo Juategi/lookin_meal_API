@@ -15,6 +15,7 @@ const dbrt = require('./reservations')
 const dbc = require('./codes')
 const dbrq = require('./requests')
 const dbn = require('./nanonets')
+const dbp = require('./payment')
 
 const port = 4000
 const cCPUs   = require('os').cpus().length
@@ -140,6 +141,19 @@ else {
 
   app.post('/nanonets', dbn.sendFile)
   app.get('/nanonets', dbn.checkRequest)
+
+  app.get('/sponsor', dbp.getSponshorship)
+  app.post('/sponsor', dbp.createSponshorship)
+  app.put('/sponsor', dbp.updateSponshorship)
+
+  app.get('/premium', dbp.getPremium)
+  app.post('/premium', dbp.createPremium)
+  app.put('/premium', dbp.updatePremium)
+
+  app.get('/payment', dbp.getPayments)
+  app.post('/payment', dbp.createPayment)
+
+  app.get('/prices', dbp.getPrices)
 
   app.listen(port, () => {
     console.log(`App running on port ${port}.`)
