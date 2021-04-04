@@ -22,7 +22,7 @@ const getSponshorship = (request, response) => {
 }
 
 const updateSponshorship = (request, response) => {
-    const {restaurant_id} = request.headers;
+    const {restaurant_id} = request.body;
     pool.query("UPDATE sponsor SET clicks = clicks - 1 where restaurant_id = $1)", [restaurant_id], (error, results) => {
       if (error) {
         throw error
@@ -32,7 +32,7 @@ const updateSponshorship = (request, response) => {
 }
 
 const createSponshorship = (request, response) => {
-    const {restaurant_id} = request.headers;
+    const {restaurant_id} = request.body;
     pool.query("INSERT INTO sponsor (restaurant_id, clicks) VALUES($1, 0)", [restaurant_id], (error, results) => {
       if (error) {
         throw error
@@ -53,7 +53,7 @@ const getPremium = (request, response) => {
 }
 
 const createPremium = (request, response) => {
-    const {restaurant_id, date} = request.headers;
+    const {restaurant_id, date} = request.body;
     pool.query("INSERT INTO premium (restaurant_id, sponshorshiptime) VALUES($1, $2)", [restaurant_id, date], (error, results) => {
       if (error) {
         throw error
@@ -63,7 +63,7 @@ const createPremium = (request, response) => {
 }
 
 const updatePremium = (request, response) => {
-    const {restaurant_id, date} = request.headers;
+    const {restaurant_id, date} = request.body;
     pool.query("UPDATE premium SET sponshorshiptime = $2 where restaurant_id = $1)", [restaurant_id, date], (error, results) => {
       if (error) {
         throw error
@@ -84,7 +84,7 @@ const getPayments = (request, response) => {
 }
 
 const createPayment = (request, response) => {
-    const {restaurant_id, user_id, paymentdate, price, service, description} = request.headers;
+    const {restaurant_id, user_id, paymentdate, price, service, description} = request.body;
     pool.query("INSERT INTO payment (restaurant_id, user_id, paymentdate, price, service, description) VALUES($1, $2, $3, $4, $5, $6)", [restaurant_id, user_id, paymentdate, price, service, description], (error, results) => {
       if (error) {
         throw error

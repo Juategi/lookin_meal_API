@@ -49,6 +49,11 @@ create table payment(id serial PRIMARY KEY, restaurant_id integer not null, user
 
 commit;
 
+INSERT INTO prices (type, quantity, price) values ('click', 100, 7.0);
+INSERT INTO prices (type, quantity, price) values ('click', 1000, 50.0);
+INSERT INTO prices (type, quantity, price) values ('click', 10000, 200.0);
+INSERT INTO prices (type, quantity, price) values ('premium', 1, 15.0);
+
 CREATE OR REPLACE FUNCTION distance(lat1 FLOAT, lon1 FLOAT, lat2 FLOAT, lon2 FLOAT) RETURNS FLOAT AS $$ DECLARE x float = 111.12 * (lat2 - lat1); y float = 111.12 * (lon2 - lon1) * cos(lat1 / 92.215); BEGIN RETURN sqrt(x * x + y * y); END $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION totalRating(rating float, votes integer) RETURN FLOAT AS $$ DECLARE x float = 
