@@ -22,23 +22,28 @@ const getSponshorship = (request, response) => {
 }
 
 const updateSponshorship = (request, response) => {
-    const {restaurant_id} = request.body;
-    pool.query("UPDATE sponsor SET clicks = clicks - 1 where restaurant_id = $1", [restaurant_id], (error, results) => {
+    const {restaurant_id, clicks} = request.body;
+    pool.query("UPDATE sponsor SET clicks = clicks + $2 where restaurant_id = $1", [restaurant_id, clicks], (error, results) => {
       if (error) {
         throw error
       }
-      response.status(201).send(`-1 click: ${restaurant_id}`)
+      response.status(201).send(`updated sponsor: ${restaurant_id}`)
     })
 }
 
 const createSponshorship = (request, response) => {
     const {restaurant_id} = request.body;
+    try{
     pool.query("INSERT INTO sponsor (restaurant_id, clicks) VALUES($1, 0)", [restaurant_id], (error, results) => {
       if (error) {
         throw error
       }
       response.status(201).send(`Sponsor created: ${restaurant_id}`)
     })
+  }
+  catch(e){
+    console.log("Sponsor already created")
+  }
 }
 
 
