@@ -13,7 +13,7 @@ const getPrices = (request, response) => {
 
 const getSponshorship = (request, response) => {
     const {restaurant_id} = request.headers;
-    pool.query("SELECT * from sponsor where restaurant_id = $1", [restaurant_id], (error, results) => {
+    pool.query("SELECT * from sponsor where restaurant_id_sponsor = $1", [restaurant_id], (error, results) => {
       if (error) {
         throw error
       }
@@ -23,7 +23,7 @@ const getSponshorship = (request, response) => {
 
 const updateSponshorship = (request, response) => {
     const {restaurant_id, clicks} = request.body;
-    pool.query("UPDATE sponsor SET clicks = clicks + $2 where restaurant_id = $1", [restaurant_id, clicks], (error, results) => {
+    pool.query("UPDATE sponsor SET clicks = clicks + $2 where restaurant_id_sponsor = $1", [restaurant_id, clicks], (error, results) => {
       if (error) {
         throw error
       }
@@ -34,7 +34,7 @@ const updateSponshorship = (request, response) => {
 const createSponshorship = (request, response) => {
     const {restaurant_id} = request.body;
     try{
-    pool.query("INSERT INTO sponsor (restaurant_id, clicks) VALUES($1, 0)", [restaurant_id], (error, results) => {
+    pool.query("INSERT INTO sponsor (restaurant_id_sponsor, clicks) VALUES($1, 0)", [restaurant_id], (error, results) => {
       if (error) {
         throw error
       }
@@ -44,6 +44,16 @@ const createSponshorship = (request, response) => {
   catch(e){
     console.log("Sponsor already created")
   }
+}
+
+const getSponshored = (request, response) => {
+  const {latitude, longitude} = request.headers;
+  pool.query("select * from getSponsored($1, $2);", [latitude, longitude], (error, results) => {
+    if (error) {
+      throw error
+    }
+    response.status(200).json(results.rows)
+  })
 }
 
 
@@ -107,5 +117,6 @@ module.exports = {
     getPrices,
     getSponshorship,
     updatePremium,
-    updateSponshorship
+    updateSponshorship,
+    getSponshored
 }

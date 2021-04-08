@@ -41,7 +41,7 @@ create table pdfrequest(user_id varchar(50)  NOT NULL, restaurant_id integer not
 
 create table prices(type varchar(10) NOT NULL, quantity integer not null, price float not null, PRIMARY KEY (type, quantity));
 
-create table sponsor(restaurant_id integer not null, clicks integer not null, PRIMARY KEY (restaurant_id), CONSTRAINT restaurant_sponsor__fkey FOREIGN KEY (restaurant_id) REFERENCES restaurant (restaurant_id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE);
+create table sponsor(restaurant_id_sponsor integer not null, clicks integer not null, lasttime timestamp without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,  PRIMARY KEY (restaurant_id), CONSTRAINT restaurant_sponsor__fkey FOREIGN KEY (restaurant_id_sponsor) REFERENCES restaurant (restaurant_id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE);
 
 create table premium(restaurant_id integer not null, premiumtime date not null, ispremium boolean, PRIMARY KEY (restaurant_id), CONSTRAINT restaurant_premium__fkey FOREIGN KEY (restaurant_id) REFERENCES restaurant (restaurant_id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE);
 
@@ -53,6 +53,23 @@ INSERT INTO prices (type, quantity, price) values ('click', 100, 7.0);
 INSERT INTO prices (type, quantity, price) values ('click', 1000, 50.0);
 INSERT INTO prices (type, quantity, price) values ('click', 10000, 200.0);
 INSERT INTO prices (type, quantity, price) values ('premium', 1, 15.0);
+
+CREATE OR REPLACE FUNCTION getSponsored(latitudearg float, longitudearg float)
+  RETURNS TABLE (restaurant_id integer, ta_id integer, name VARCHAR (150), address text, city VARCHAR (50), country VARCHAR (50), email VARCHAR (50), phone VARCHAR (50), website VARCHAR (150), weburl VARCHAR (300), types text[], images text[], schedule json, rating real, latitude real, longitude real, numRevta integer, sections text[], currency varchar(5),  dailymenu text[], delivery text[], mealtime float, distance float) AS
+$BODY$
+BEGIN
+FOR restaurant_id IN
+    SELECT re.restaurant_id
+    FROM restaurant re, sponsor s
+    WHERE not s.clicks = 0 and re.restaurant_id = s.restaurant_id_sponsor and distance(latitudearg, longitudearg, re.latitude, re.longitude) <= 10 ORDER BY s.lasttime asc LIMIT 3
+LOOP
+    UPDATE sponsor SET lasttime = CURRENT_TIMESTAMP WHERE restaurant_id_sponsor = restaurant_id;
+END LOOP;
+RETURN QUERY SELECT re.*, distance(latitudearg, longitudearg, re.latitude, re.longitude) as distance
+    FROM restaurant re, sponsor s
+    WHERE not s.clicks = 0 and re.restaurant_id = s.restaurant_id_sponsor and distance(latitudearg, longitudearg, re.latitude, re.longitude) <= 10 ORDER BY s.lasttime desc LIMIT 3;
+END;
+$BODY$ LANGUAGE plpgsql VOLATILE;
 
 CREATE OR REPLACE FUNCTION distance(lat1 FLOAT, lon1 FLOAT, lat2 FLOAT, lon2 FLOAT) RETURNS FLOAT AS $$ DECLARE x float = 111.12 * (lat2 - lat1); y float = 111.12 * (lon2 - lon1) * cos(lat1 / 92.215); BEGIN RETURN sqrt(x * x + y * y); END $$ LANGUAGE plpgsql;
 
