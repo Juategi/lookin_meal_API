@@ -154,7 +154,7 @@ else {
   app.post('/payment', dbp.createPayment)
 
   app.get('/prices', dbp.getPrices)
-  app.get('/sponsored', dbp.getSponshored)
+  app.get('/sponsored', dbp.getSponsored)
 
   app.listen(port, () => {
     console.log(`App running on port ${port}.`)

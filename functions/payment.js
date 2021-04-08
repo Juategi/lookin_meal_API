@@ -46,7 +46,7 @@ const createSponshorship = (request, response) => {
   }
 }
 
-const getSponshored = (request, response) => {
+const getSponsored = (request, response) => {
   const {latitude, longitude} = request.headers;
   pool.query("select * from getSponsored($1, $2);", [latitude, longitude], (error, results) => {
     if (error) {
@@ -118,5 +118,5 @@ module.exports = {
     getSponshorship,
     updatePremium,
     updateSponshorship,
-    getSponshored
+    getSponsored
 }
