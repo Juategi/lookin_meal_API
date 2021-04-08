@@ -16,6 +16,7 @@ const dbc = require('./codes')
 const dbrq = require('./requests')
 const dbn = require('./nanonets')
 const dbp = require('./payment')
+const dbst = require('./statistics')
 
 const port = 4000
 const cCPUs   = require('os').cpus().length
@@ -155,6 +156,11 @@ else {
 
   app.get('/prices', dbp.getPrices)
   app.get('/sponsored', dbp.getSponsored)
+
+  app.get('/visits', dbst.getVisits)
+  app.post('/visits', dbst.addVisit)
+  app.get('/rates', dbst.getRate)
+  app.post('/rates', dbst.addRate)
 
   app.listen(port, () => {
     console.log(`App running on port ${port}.`)

@@ -38,7 +38,6 @@ create table notifications(id serial PRIMARY KEY, restaurant_id integer not null
 
 create table pdfrequest(user_id varchar(50)  NOT NULL, restaurant_id integer not null, PRIMARY KEY (restaurant_id, user_id), CONSTRAINT pdfrequest_users_fkey FOREIGN KEY (user_id) REFERENCES users (user_id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE, CONSTRAINT restaurant_to_pdfrequest_fkey FOREIGN KEY (restaurant_id) REFERENCES restaurant (restaurant_id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE); 
 
-
 create table prices(type varchar(10) NOT NULL, quantity integer not null, price float not null, PRIMARY KEY (type, quantity));
 
 create table sponsor(restaurant_id_sponsor integer not null, clicks integer not null, lasttime timestamp without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,  PRIMARY KEY (restaurant_id), CONSTRAINT restaurant_sponsor__fkey FOREIGN KEY (restaurant_id_sponsor) REFERENCES restaurant (restaurant_id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE);
@@ -47,6 +46,10 @@ create table premium(restaurant_id integer not null, premiumtime date not null, 
 
 create table payment(id serial PRIMARY KEY, restaurant_id integer not null, user_id varchar(50) NOT NULL, paymentdate DATE not null, price float not null, service VARCHAR(50) not null, description text not null,  CONSTRAINT restaurant_payment__fkey FOREIGN KEY (restaurant_id) REFERENCES restaurant (restaurant_id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE, CONSTRAINT payment_users_fkey FOREIGN KEY (user_id) REFERENCES users (user_id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE);
 
+create table visits(restaurant_id integer not null, user_id varchar(50) NOT NULL, visit timestamp without time zone NOT NULL,  PRIMARY KEY (user_id, restaurant_id, visit), CONSTRAINT visits_users_fkey FOREIGN KEY (user_id) REFERENCES users (user_id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE, CONSTRAINT restaurant_to_visits_fkey FOREIGN KEY (restaurant_id) REFERENCES restaurant (restaurant_id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE);
+
+create table rates(restaurant_id integer not null, user_id varchar(50) NOT NULL, entry_id integer NOT NULL,  rate timestamp without time zone NOT NULL, withcomment boolean not null,  PRIMARY KEY (user_id, restaurant_id, entry_id, rate), CONSTRAINT rates_users_fkey FOREIGN KEY (user_id) REFERENCES users (user_id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE, CONSTRAINT restaurant_to_rates_fkey FOREIGN KEY (restaurant_id) REFERENCES restaurant (restaurant_id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE, CONSTRAINT rates_menuentry_fkey FOREIGN KEY (entry_id) REFERENCES menuentry (entry_id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE);
+
 commit;
 
 INSERT INTO prices (type, quantity, price) values ('click', 100, 7.0);
@@ -54,20 +57,20 @@ INSERT INTO prices (type, quantity, price) values ('click', 1000, 50.0);
 INSERT INTO prices (type, quantity, price) values ('click', 10000, 200.0);
 INSERT INTO prices (type, quantity, price) values ('premium', 1, 15.0);
 
-CREATE OR REPLACE FUNCTION getSponsored(latitudearg float, longitudearg float)
+CREATE OR REPLACE FUNCTION getSponsored(latitudearg float, longitudearg float, quantity int)
   RETURNS TABLE (restaurant_id integer, ta_id integer, name VARCHAR (150), address text, city VARCHAR (50), country VARCHAR (50), email VARCHAR (50), phone VARCHAR (50), website VARCHAR (150), weburl VARCHAR (300), types text[], images text[], schedule json, rating real, latitude real, longitude real, numRevta integer, sections text[], currency varchar(5),  dailymenu text[], delivery text[], mealtime float, distance float) AS
 $BODY$
 BEGIN
 FOR restaurant_id IN
     SELECT re.restaurant_id
     FROM restaurant re, sponsor s
-    WHERE not s.clicks = 0 and re.restaurant_id = s.restaurant_id_sponsor and distance(latitudearg, longitudearg, re.latitude, re.longitude) <= 10 ORDER BY s.lasttime asc LIMIT 3
+    WHERE not s.clicks = 0 and re.restaurant_id = s.restaurant_id_sponsor and distance(latitudearg, longitudearg, re.latitude, re.longitude) <= 10 ORDER BY s.lasttime asc LIMIT quantity
 LOOP
     UPDATE sponsor SET lasttime = CURRENT_TIMESTAMP WHERE restaurant_id_sponsor = restaurant_id;
 END LOOP;
 RETURN QUERY SELECT re.*, distance(latitudearg, longitudearg, re.latitude, re.longitude) as distance
     FROM restaurant re, sponsor s
-    WHERE not s.clicks = 0 and re.restaurant_id = s.restaurant_id_sponsor and distance(latitudearg, longitudearg, re.latitude, re.longitude) <= 10 ORDER BY s.lasttime desc LIMIT 3;
+    WHERE not s.clicks = 0 and re.restaurant_id = s.restaurant_id_sponsor and distance(latitudearg, longitudearg, re.latitude, re.longitude) <= 10 ORDER BY s.lasttime desc LIMIT quantity;
 END;
 $BODY$ LANGUAGE plpgsql VOLATILE;
 

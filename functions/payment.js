@@ -47,8 +47,8 @@ const createSponshorship = (request, response) => {
 }
 
 const getSponsored = (request, response) => {
-  const {latitude, longitude} = request.headers;
-  pool.query("select * from getSponsored($1, $2);", [latitude, longitude], (error, results) => {
+  const {latitude, longitude, quantity} = request.headers;
+  pool.query("select * from getSponsored($1, $2, $3);", [latitude, longitude, quantity], (error, results) => {
     if (error) {
       throw error
     }
