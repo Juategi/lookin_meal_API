@@ -16,7 +16,7 @@ const addVisit = (request, response) => {
 
 const getVisits = (request, response) => {
     const {restaurant_id} = request.headers;
-    pool.query("SELECT * FROM visits where restaurant_id = $1", [restaurant_id], (error, results) => {
+    pool.query("SELECT * FROM visits where restaurant_id = $1 order by visit desc", [restaurant_id], (error, results) => {
       if (error) {
         throw error
       }
@@ -41,7 +41,7 @@ const addRate = (request, response) => {
 
 const getRate = (request, response) => {
     const {restaurant_id} = request.headers;
-    pool.query("(SELECT * FROM rates where restaurant_id = $1) ", [restaurant_id], (error, results) => {
+    pool.query("SELECT * FROM rates where restaurant_id = $1 order by rate desc", [restaurant_id], (error, results) => {
       if (error) {
         throw error
       }
