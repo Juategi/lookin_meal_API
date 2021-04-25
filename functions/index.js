@@ -17,6 +17,7 @@ const dbrq = require('./requests')
 const dbn = require('./nanonets')
 const dbp = require('./payment')
 const dbst = require('./statistics')
+const stripe = require('./stripe')
 
 const port = 4000
 const cCPUs   = require('os').cpus().length
@@ -161,6 +162,9 @@ else {
   app.post('/visits', dbst.addVisit)
   app.get('/rates', dbst.getRate)
   app.post('/rates', dbst.addRate)
+
+  app.post('/stripe', stripe.createIntent)
+
 
   app.listen(port, () => {
     console.log(`App running on port ${port}.`)
