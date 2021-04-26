@@ -122,6 +122,8 @@ else {
 
   app.post('/emailsend', dbrq.sendConfirmationCode)
   app.put('/emailresend', dbrq.reSendConfirmationCode)
+  app.post('/smssend', dbrq.sendConfirmationSms)
+  app.put('/smsresend', dbrq.reSendConfirmationSms)
   app.post('/confirmcodes', dbrq.confirmCodes)
   app.post('/request', dbrq.createRequest)
   app.post('/requestrestaurant', dbrq.createRestaurantRequest)

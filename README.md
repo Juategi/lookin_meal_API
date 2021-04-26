@@ -7,15 +7,13 @@ EN BUSQUEDA UNICA NO GUARDAR EL DISHQUERY,
 
 while en login por si hay dc,
 Terminar busqueda platos compleja, menos exacta,
-hacer trim() en la busqueda da error
-share y aviso de conexion
-sistema actualizacion y valorar app
-arreglar enviar email confirmacion y hacer sms
-sistema de pagos
-arreglar mysql para nanonets
+sistema actualizacion y valorar app (arreglar)
+crear dominio email y (arreglar)
+sistema de pagos 
+postgre para nanonets
 idioma
 cambiar labels meses (idioma)
-imprimir facturas //añadir toast al descargar  pdfs
+crear facturas por renovación de subscripcion
 
 
 https://developers.google.com/maps/documentation/android-sdk/get-api-key#restrict_key

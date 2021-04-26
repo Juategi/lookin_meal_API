@@ -12,6 +12,7 @@
     "node": "8"
   },
   "dependencies": {
+    "@sendgrid/mail": "^7.4.2",
     "cluster": "^0.7.7",
     "compression": "^1.7.4",
     "dotenv": "^8.2.0",
@@ -24,7 +25,8 @@
     "nodemailer": "^6.5.0",
     "pg": "^7.18.2",
     "request": "^2.88.2",
-    "stripe": "^8.144.0"
+    "stripe": "^8.144.0",
+    "twilio": "^3.61.0"
   },
   "devDependencies": {
     "firebase-functions-test": "^0.1.6"

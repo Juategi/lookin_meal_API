@@ -1,6 +1,14 @@
 const pool = require("./mypool").pool
+
 var nodemailer = require('nodemailer')
 const servermail = 'lookinmeal@gmail.com'
+
+const sgMail = require('@sendgrid/mail');
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+
+const accountSid = process.env.TWILIO_ACCOUNT_SID;
+const authToken = process.env.TWILIO_AUTH_TOKEN;
+const client = require('twilio')(accountSid, authToken);
 
 var transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -10,12 +18,50 @@ var transporter = nodemailer.createTransport({
     }
 });
 
-const sendConfirmationCode = (request, response) => {
+const sendConfirmationSms = (request, response) => {
+  const {phone, localcode} = request.body
+  var code = Math.floor(Math.random() * 100000) + 1;
+  client.messages
+  .create({
+     body: 'Your confirmation code is ' + code,
+     from: '+15126400348',
+     to: '+34654280943'
+   })
+  .then(message => console.log(message.sid));
+  pool.query('INSERT INTO confirmations (localcode, code, codedate) VALUES ($1, $2, CURRENT_DATE)',
+   [localcode, code], (error, results) => {
+    if (error) {
+      throw error
+    }
+    response.status(201).send(`Code created`)
+  }) 
+}
+
+const reSendConfirmationSms = (request, response) => {
+  const {phone, localcode} = request.body
+  var code = Math.floor(Math.random() * 100000) + 1;
+  client.messages
+  .create({
+     body: 'Your confirmation code is ' + code,
+     from: '+15126400348',
+     to: '+34654280943'
+   })
+  .then(message => console.log(message.sid));
+  pool.query('UPDATE confirmations SET code = $2 where localcode = $1',
+   [localcode, code], (error, results) => {
+    if (error) {
+      throw error
+    }
+    response.status(201).send(`Code resent`)
+  }) 
+}
+
+const sendConfirmationCode = (request, response ,next) => {
     const {email, localcode} = request.body
     var code = Math.floor(Math.random() * 100000) + 1;
     var mailOptions = {
         from: servermail,
-        to: email,
+        to: "juantg1994@gmail.com",
         subject: 'Confirmation code FindEat',
         text: 'Your confirmation code is ' + code
     };
@@ -26,6 +72,18 @@ const sendConfirmationCode = (request, response) => {
           console.log('Email sent: ' + info.response);
         }
     });
+    /*try{
+      const msg = {
+        to: "juantg1994@gmail.com",
+        from: 'test@example.com',
+        subject: 'Confirmation code FindEat',
+        text: 'Your confirmation code is ' + code,
+        html: '<strong>and easy to do anywhere, even with Node.js</strong>',
+      };
+      sgMail.send(msg);
+    }catch(e){
+      next(e)
+    }*/
     pool.query('INSERT INTO confirmations (localcode, code, codedate) VALUES ($1, $2, CURRENT_DATE)',
      [localcode, code], (error, results) => {
       if (error) {
@@ -40,7 +98,7 @@ const reSendConfirmationCode = (request, response) => {
     var code = Math.floor(Math.random() * 100000) + 1;
     var mailOptions = {
         from: servermail,
-        to: email,
+        to: "juantg1994@gmail.com",
         subject: 'Confirmation code FindEat',
         text: 'Your confirmation code is ' + code
     };
@@ -106,5 +164,7 @@ module.exports = {
     reSendConfirmationCode,
     confirmCodes,
     createRequest,
-    createRestaurantRequest
+    createRestaurantRequest,
+    sendConfirmationSms,
+    reSendConfirmationSms
 }
