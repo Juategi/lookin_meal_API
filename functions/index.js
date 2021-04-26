@@ -166,7 +166,8 @@ else {
   app.post('/rates', dbst.addRate)
 
   app.post('/stripe', stripe.createIntent)
-
+  
+  app.get('/feed', dbr.getFollowingFeed)
 
   app.listen(port, () => {
     console.log(`App running on port ${port}.`)

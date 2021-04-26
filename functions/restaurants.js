@@ -288,6 +288,7 @@ const createRestaurant = (request, response) => {
     )
   }
 
+
   const getOwned = (request, response) => {
     const {user_id, latitude, longitude} = request.headers;
     pool.query("SELECT r.*, distance($2, $3, latitude, longitude) as distance FROM restaurant r, owner o where o.user_id = $1 and r.restaurant_id = o.restaurant_id", [user_id, latitude, longitude], (error, results) => {
@@ -296,6 +297,19 @@ const createRestaurant = (request, response) => {
       }
       response.status(200).json(results.rows)
     })
+  }
+
+  const getFollowingFeed = (request, response) => {
+    const {user_id} = request.headers;
+    pool.query(
+      `SELECT  r.*, u.*, e.name as entryname, e.description, e.price, e.image as entryimage, e.allergens, e.restaurant_id FROM menuentry e left join rating r on r.entry_id = e.entry_id left join users u on u.user_id = r.user_id WHERE u.user_id =ANY(array(select distinct followerid from followers where user_id = $1)) order by r.ratedate desc limit 20;`,[user_id],
+      (error, results) => {
+        if (error) {
+          throw error
+        }
+        response.status(200).json(results.rows)
+      }
+    )
   }
 
 
@@ -324,6 +338,7 @@ const createRestaurant = (request, response) => {
     getOwned,
     getTopEntries,
     getTopRestaurants,
-    getRecommended
+    getRecommended,
+    getFollowingFeed
   }
 

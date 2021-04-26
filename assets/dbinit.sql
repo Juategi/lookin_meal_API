@@ -119,6 +119,8 @@ select re.*, distance(39.4693409, -0.3536466, re.latitude, re.longitude) from re
 
 select re.name, distance(39.4693409, -0.3536466, re.latitude, re.longitude) as distance from restaurant re left join menuentry e on re.restaurant_id = e.restaurant_id left join rating r on r.entry_id = e.entry_id where distance(39.4693409, -0.3536466, re.latitude, re.longitude) < 20.0  and re.types && array(select distinct unnest(re.types) from restaurant re left join menuentry e on re.restaurant_id = e.restaurant_id left join rating r on r.entry_id = e.entry_id where r.user_id = 'I4z3wFH0SeTrVSqVtb8qAsXQijk1' and r.ratedate > current_date - 30) and not re.restaurant_id =ANY(array(select distinct re.restaurant_id from restaurant re left join menuentry e on re.restaurant_id = e.restaurant_id left join rating r on r.entry_id = e.entry_id where r.user_id = 'I4z3wFH0SeTrVSqVtb8qAsXQijk1' and r.ratedate > current_date - 30)) group by re.restaurant_id order by (COUNT(r)*5*0.5/1000 + AVG(r.rating)*0.5) desc limit 12;
 
+SELECT r.*, u.*, e.name, e.description, e.price, e.image as entryimage, e.allergens FROM menuentry e left join rating r on r.entry_id = e.entry_id left join users u on u.user_id = r.user_id WHERE u.user_id =ANY(array(select distinct followerid from followers where user_id = 'I4z3wFH0SeTrVSqVtb8qAsXQijk1')) order by r.ratedate desc limit 20;
+
 Café
 Afghan
 Afghani
