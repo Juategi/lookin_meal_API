@@ -12,7 +12,6 @@ crear dominio email y (arreglar)
 sistema de pagos 
 postgre para nanonets
 idioma
-añadir usuarios checked
 cambiar labels meses (idioma)
 crear facturas por renovación de subscripcion
 
