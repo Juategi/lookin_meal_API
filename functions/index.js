@@ -169,6 +169,9 @@ else {
   
   app.get('/feed', dbr.getFollowingFeed)
 
+  app.get('/userssearch', dbu.searchUsers)
+  app.get('/usersfeed', dbu.getUsersFeed)
+
   app.listen(port, () => {
     console.log(`App running on port ${port}.`)
   })

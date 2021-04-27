@@ -300,9 +300,9 @@ const createRestaurant = (request, response) => {
   }
 
   const getFollowingFeed = (request, response) => {
-    const {user_id} = request.headers;
+    const {user_id, offset} = request.headers;
     pool.query(
-      `SELECT  r.*, u.*, e.name as entryname, e.description, e.price, e.image as entryimage, e.allergens, e.restaurant_id FROM menuentry e left join rating r on r.entry_id = e.entry_id left join users u on u.user_id = r.user_id WHERE u.user_id =ANY(array(select distinct followerid from followers where user_id = $1)) order by r.ratedate desc limit 20;`,[user_id],
+      `SELECT  r.*, u.*, e.name as entryname, e.description, e.price, e.image as entryimage, e.allergens, e.restaurant_id FROM menuentry e left join rating r on r.entry_id = e.entry_id left join users u on u.user_id = r.user_id WHERE u.user_id =ANY(array(select distinct followerid from followers where user_id = $1)) order by r.ratedate desc limit 10 offset $2;`,[user_id, offset],
       (error, results) => {
         if (error) {
           throw error
@@ -311,6 +311,7 @@ const createRestaurant = (request, response) => {
       }
     )
   }
+
 
 
   module.exports = {

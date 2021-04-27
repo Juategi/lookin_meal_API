@@ -3,7 +3,6 @@ const pool = require("./mypool").pool
 const getUserById = (request, response) => {
   const {id} = request.headers;
   const statement = `SELECT * FROM users WHERE user_id = $1 `
-  console.log(id)
   pool.query(statement,[id], (error, results) => {
     if (error) {
       throw error
@@ -453,6 +452,31 @@ const updateToken = (request, response) => {
   )
 }
 
+const getUsersFeed = (request, response) => {
+  const {user_id, latitude, longitude} = request.headers;
+  const statement = 'SELECT u.* FROM users u WHERE not u.user_id =ANY(array(select distinct followerid from followers where user_id = $1)) and not u.user_id = $1 and distance($2, $3, (select re.latitude from restaurant re left join menuentry e on e.restaurant_id = re.restaurant_id left join rating r on r.entry_id = e.entry_id where r.user_id = u.user_id order by r.ratedate desc limit 1) , (select re.longitude from restaurant re left join menuentry e on e.restaurant_id = re.restaurant_id left join rating r on r.entry_id = e.entry_id where r.user_id = u.user_id order by r.ratedate desc limit 1)) < 10 order by (select count(*) from followers where followerid = u.user_id) desc limit 30;'
+  pool.query(statement,[user_id, latitude, longitude], (error, results) => {
+    if (error) {
+      response.status(400).send(error)
+    }
+    else{
+      response.status(200).json(results.rows)
+    }
+  })
+}
+
+const searchUsers = (request, response) => {
+  const {user_id, query} = request.headers;
+  pool.query(
+    `SELECT u.* FROM users u WHERE not u.user_id = $1 and ( (to_tsvector('simple', u.name) @@ to_tsquery('simple', $2)) or (to_tsvector('simple', u.username) @@ to_tsquery('simple', $2)) ) limit 30;`, [user_id, query],
+    (error, results) => {
+      if (error) {
+        throw error
+      }
+      response.status(200).json(results.rows)
+    }
+  )
+}
 
 module.exports = {
   getUserById,
@@ -488,5 +512,7 @@ module.exports = {
   addNotification, 
   deleteNotification,
   getNotifications,
-  updateToken
+  updateToken,
+  getUsersFeed,
+  searchUsers
 }
