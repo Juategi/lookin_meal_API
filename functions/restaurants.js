@@ -25,6 +25,7 @@ const createRestaurant = (request, response) => {
 
   const getRestaurantsById = (request, response) => {
     const {ids, latitude, longitude} = request.headers;
+    console.log(ids)
     pool.query("SELECT r.*, distance($2, $3, latitude, longitude) as distance FROM restaurant r where r.restaurant_id = ANY($1::int[])", [ids, latitude, longitude], (error, results) => {
       if (error) {
         throw error

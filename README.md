@@ -9,12 +9,15 @@ while en login por si hay dc,
 Terminar busqueda platos compleja, menos exacta,
 sistema actualizacion y valorar app (arreglar)
 crear dominio email y (arreglar)
-sistema de pagos 
-postgre para nanonets
-idioma
+traducir types / relation with restaurant
 cambiar labels meses (idioma)
-crear facturas por renovación de subscripcion
-
+crear facturas por renovación de subscripcion y sistema suscripcion
+probar el workflow
+scrapear ESP
+arreglar backbuttonintercep (en movil)
+arreglar qr
+actualizar billing en google para traducciones y mapa
+bordo  pizza error schedule
 
 https://developers.google.com/maps/documentation/android-sdk/get-api-key#restrict_key
 

@@ -50,6 +50,8 @@ create table visits(restaurant_id integer not null, user_id varchar(50) NOT NULL
 
 create table rates(restaurant_id integer not null, user_id varchar(50) NOT NULL, entry_id integer NOT NULL,  rate timestamp without time zone NOT NULL, withcomment boolean not null,  PRIMARY KEY (user_id, restaurant_id, entry_id, rate), CONSTRAINT rates_users_fkey FOREIGN KEY (user_id) REFERENCES users (user_id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE, CONSTRAINT restaurant_to_rates_fkey FOREIGN KEY (restaurant_id) REFERENCES restaurant (restaurant_id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE, CONSTRAINT rates_menuentry_fkey FOREIGN KEY (entry_id) REFERENCES menuentry (entry_id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE);
 
+create table nanonets(id serial PRIMARY KEY, category text, category1 text, description text, name text, price text, nanonets_file text, nanonets_image_url text);
+
 commit;
 
 INSERT INTO prices (type, quantity, price) values ('click', 100, 7.0);
@@ -124,6 +126,18 @@ SELECT r.*, u.*, e.name, e.description, e.price, e.image as entryimage, e.allerg
 SELECT u.* FROM users u WHERE not u.user_id =ANY(array(select distinct followerid from followers where user_id = 'I4z3wFH0SeTrVSqVtb8qAsXQijk1')) and not u.user_id = 'I4z3wFH0SeTrVSqVtb8qAsXQijk1' and distance(39.4693409, -0.3536466, (select re.latitude from restaurant re left join menuentry e on e.restaurant_id = re.restaurant_id left join rating r on r.entry_id = e.entry_id where r.user_id = u.user_id order by r.ratedate desc limit 1) , (select re.longitude from restaurant re left join menuentry e on e.restaurant_id = re.restaurant_id left join rating r on r.entry_id = e.entry_id where r.user_id = u.user_id order by r.ratedate desc limit 1)) < 10 order by (select count(*) from followers where followerid = u.user_id) desc limit 30;
 
 SELECT u.* FROM users u WHERE not u.user_id =ANY(array(select distinct followerid from followers where user_id = $1)) and not u.user_id = $1 and distance($2, $3, (select re.latitude from restaurant re left join menuentry e on e.restaurant_id = re.restaurant_id left join rating r on r.entry_id = e.entry_id where r.user_id = u.user_id order by r.ratedate desc limit 1) , (select re.longitude from restaurant re left join menuentry e on e.restaurant_id = re.restaurant_id left join rating r on r.entry_id = e.entry_id where r.user_id = u.user_id order by r.ratedate desc limit 1)) < 10 order by (select count(*) from followers where followerid = u.user_id) desc limit 30;
+
+postgres=# update restaurant set sections = array[]::text[] where restaurant_id = 995;
+
+postgres=# update restaurant set sections = array[]::text[] where restaurant_id = 898;
+
+postgres=# update restaurant set sections = array[]::text[] where restaurant_id = 816;
+
+postgres=# delete from menuentry where restaurant_id = 995;
+
+postgres=# delete from menuentry where restaurant_id = 898;
+
+postgres=# delete from menuentry where restaurant_id = 816;
 
 Café
 Afghan
