@@ -68,8 +68,8 @@ const getPremium = (request, response) => {
 }
 
 const createPremium = (request, response) => {
-    const {restaurant_id, date} = request.body;
-    pool.query("INSERT INTO premium (restaurant_id, premiumtime, ispremium) VALUES($1, $2, true)", [restaurant_id, date], (error, results) => {
+    const {restaurant_id, date, email} = request.body;
+    pool.query("INSERT INTO premium (restaurant_id, premiumtime, ispremium, email) VALUES($1, $2, true, $3)", [restaurant_id, date, email], (error, results) => {
       if (error) {
         throw error
       }
@@ -107,6 +107,7 @@ const createPayment = (request, response) => {
       response.status(201).send(`Payment done: ${restaurant_id}`)
     })
 }
+
 
 module.exports = {
     createPayment,

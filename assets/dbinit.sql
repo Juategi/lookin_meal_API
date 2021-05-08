@@ -42,7 +42,7 @@ create table prices(type varchar(10) NOT NULL, quantity integer not null, price 
 
 create table sponsor(restaurant_id_sponsor integer not null, clicks integer not null, lasttime timestamp without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,  PRIMARY KEY (restaurant_id), CONSTRAINT restaurant_sponsor__fkey FOREIGN KEY (restaurant_id_sponsor) REFERENCES restaurant (restaurant_id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE);
 
-create table premium(restaurant_id integer not null, premiumtime date not null, ispremium boolean, PRIMARY KEY (restaurant_id), CONSTRAINT restaurant_premium__fkey FOREIGN KEY (restaurant_id) REFERENCES restaurant (restaurant_id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE);
+create table premium(restaurant_id integer not null, premiumtime date not null, ispremium boolean, email VARCHAR (50), PRIMARY KEY (restaurant_id), CONSTRAINT restaurant_premium__fkey FOREIGN KEY (restaurant_id) REFERENCES restaurant (restaurant_id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE);
 
 create table payment(id serial PRIMARY KEY, restaurant_id integer not null, user_id varchar(50) NOT NULL, paymentdate DATE not null, price float not null, service VARCHAR(50) not null, description text not null,  CONSTRAINT restaurant_payment__fkey FOREIGN KEY (restaurant_id) REFERENCES restaurant (restaurant_id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE, CONSTRAINT payment_users_fkey FOREIGN KEY (user_id) REFERENCES users (user_id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE);
 

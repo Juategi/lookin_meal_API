@@ -9,8 +9,6 @@ while en login por si hay dc,
 Terminar busqueda platos compleja, menos exacta,
 sistema actualizacion y valorar app (arreglar)
 crear dominio email y (arreglar)
-traducir types / relation with restaurant
-cambiar labels meses (idioma)
 crear facturas por renovación de subscripcion y sistema suscripcion
 probar el workflow
 scrapear ESP

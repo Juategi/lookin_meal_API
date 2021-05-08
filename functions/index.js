@@ -165,8 +165,12 @@ else {
   app.get('/rates', dbst.getRate)
   app.post('/rates', dbst.addRate)
 
-  app.post('/stripe', stripe.createIntent)
-  
+  app.post('/intent', stripe.createIntent)
+  app.post('/customer', stripe.createCustomer)
+  app.get('/customer', stripe.getCustomer)
+  app.post('/subscription', stripe.createSubscription)
+  app.post('/cancel', stripe.cancelSubscription)
+
   app.get('/feed', dbr.getFollowingFeed)
 
   app.get('/userssearch', dbu.searchUsers)
