@@ -35,6 +35,7 @@ async function createSubscription(request, response) {
     const {customerId, payment_intent_id, billing_cycle_anchor} = request.body;
     const payment_intent = await stripe.paymentIntents.retrieve(payment_intent_id);
     var subscription
+    console.log(billing_cycle_anchor)
     if(billing_cycle_anchor == -1){
         subscription = await stripe.subscriptions.create({
             customer: customerId,
@@ -49,7 +50,7 @@ async function createSubscription(request, response) {
     else{
         subscription = await stripe.subscriptions.create({
             customer: customerId,
-            billing_cycle_anchor: billing_cycle_anchor,
+            //billing_cycle_anchor: billing_cycle_anchor,
             items: [{
               price: 'price_1InoD6ASgVZXSVMBoRpkHTwk',
             }],
