@@ -17,8 +17,15 @@ async function createCustomer(request, response) {
     const payment_intent = await stripe.paymentIntents.retrieve(payment_intent_id);
     const customer = await stripe.customers.create({
         email: email,
-        payment_method: payment_intent.payment_method
+        payment_method: payment_intent.payment_method,
+        invoice_settings:{
+            default_payment_method: payment_intent.payment_method
+        }
     });
+    const paymentMethod = await stripe.paymentMethods.attach(
+        payment_intent.payment_method,
+        {customer: customer.id}
+    );
     response.status(200).json({customer: customer.id})
 }
 
@@ -33,7 +40,7 @@ async function updateCustomer(request, response) {
         customerId,
         {invoice_settings:{
             default_payment_method: payment_intent.payment_method
-     }});
+        }});
     response.status(200).json({customer: customer})
 }
 

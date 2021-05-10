@@ -10,6 +10,7 @@ Terminar busqueda platos compleja, menos exacta,
 sistema actualizacion y valorar app (arreglar)
 crear dominio email y (arreglar)
 probar el workflow
+multiples cancelaciones de subscriptcion no suman el trial
 scrapear ESP
 arreglar backbuttonintercep (en movil)
 arreglar qr
