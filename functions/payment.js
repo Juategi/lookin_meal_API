@@ -59,7 +59,7 @@ const getSponsored = (request, response) => {
 
 const getPremium = (request, response) => {
     const {restaurant_id} = request.headers;
-    pool.query("SELECT * from premium where restaurant_id = $1", [restaurant_id], (error, results) => {
+    pool.query("SELECT subscriptionId from premium where restaurant_id = $1", [restaurant_id], (error, results) => {
       if (error) {
         throw error
       }
@@ -68,8 +68,8 @@ const getPremium = (request, response) => {
 }
 
 const createPremium = (request, response) => {
-    const {restaurant_id, date, email} = request.body;
-    pool.query("INSERT INTO premium (restaurant_id, premiumtime, ispremium, email) VALUES($1, $2, true, $3)", [restaurant_id, date, email], (error, results) => {
+    const {restaurant_id, subscriptionId} = request.body;
+    pool.query("INSERT INTO premium (restaurant_id, subscriptionId) VALUES($1, $2)", [restaurant_id, subscriptionId], (error, results) => {
       if (error) {
         throw error
       }
@@ -78,8 +78,8 @@ const createPremium = (request, response) => {
 }
 
 const updatePremium = (request, response) => {
-    const {restaurant_id, date, premium} = request.body;
-    pool.query("UPDATE premium SET premiumtime = $2, ispremium = $3 where restaurant_id = $1", [restaurant_id, date, premium], (error, results) => {
+    const {restaurant_id, subscriptionId} = request.body;
+    pool.query("UPDATE premium SET subscriptionId = $2 where restaurant_id = $1", [restaurant_id, subscriptionId], (error, results) => {
       if (error) {
         throw error
       }

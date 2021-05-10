@@ -24,6 +24,7 @@ async function createCustomer(request, response) {
 
 async function getCustomer(request, response) {
     const {email} = request.headers;
+    console.log(email)
     const customer = await stripe.customers.retrieve({
         email: email,
     });
@@ -31,17 +32,32 @@ async function getCustomer(request, response) {
 }
 
 async function createSubscription(request, response) {
-    const {customerId, payment_intent_id} = request.body;
+    const {customerId, payment_intent_id, billing_cycle_anchor} = request.body;
     const payment_intent = await stripe.paymentIntents.retrieve(payment_intent_id);
-    const subscription = await stripe.subscriptions.create({
-        customer: customerId,
-        items: [{
-          price: 'price_1InoD6ASgVZXSVMBoRpkHTwk',
-        }],
-        payment_behavior: 'default_incomplete',
-        expand: ['latest_invoice.payment_intent'],
-        default_payment_method: payment_intent.payment_method
-    });
+    var subscription
+    if(billing_cycle_anchor == -1){
+        subscription = await stripe.subscriptions.create({
+            customer: customerId,
+            items: [{
+              price: 'price_1InoD6ASgVZXSVMBoRpkHTwk',
+            }],
+            //payment_behavior: 'default_incomplete',
+            expand: ['latest_invoice.payment_intent'],
+            default_payment_method: payment_intent.payment_method
+        });
+    }
+    else{
+        subscription = await stripe.subscriptions.create({
+            customer: customerId,
+            billing_cycle_anchor: billing_cycle_anchor,
+            items: [{
+              price: 'price_1InoD6ASgVZXSVMBoRpkHTwk',
+            }],
+            //payment_behavior: 'default_incomplete',
+            expand: ['latest_invoice.payment_intent'],
+            default_payment_method: payment_intent.payment_method
+        });
+    }
     response.status(200).json({subscriptionId: subscription.id})
 }
 
@@ -53,6 +69,14 @@ async function cancelSubscription(request, response) {
     response.status(200).json({subscription: deletedSubscription})
 }
 
+async function checkSubscription(request, response) {
+    const {subscriptionid} = request.headers;
+    const subscription = await stripe.subscriptions.retrieve(
+        subscriptionid
+    );
+    response.status(200).json({subscription: subscription})
+}
+
 async function updateSubscription(request, response) {
     const {subscriptionId} = request.body;
     const subscription = await stripe.subscriptions.retrieve(
@@ -60,12 +84,11 @@ async function updateSubscription(request, response) {
     );
     const updatedSubscription = await stripe.subscriptions.update(
         subscriptionId, {
-          items: [{
-            id: subscription.items.data[0].id,
-          }],
+          //items: [{id: subscription.items.data[0].id,}],
+          billing_cycle_anchor : "now"
         }
     );
-    response.status(200).json({subscription: deletedSubscription})
+    response.status(200).json({subscription: updatedSubscription})
 }
 
 
@@ -74,7 +97,7 @@ module.exports = {
     createCustomer,
     createSubscription,
     cancelSubscription,
-    getCustomer
+    checkSubscription,
 }
 
 

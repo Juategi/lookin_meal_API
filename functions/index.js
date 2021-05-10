@@ -167,8 +167,10 @@ else {
 
   app.post('/intent', stripe.createIntent)
   app.post('/customer', stripe.createCustomer)
-  app.get('/customer', stripe.getCustomer)
+  //app.get('/customer', stripe.getCustomer)
   app.post('/subscription', stripe.createSubscription)
+  app.get('/subscription', stripe.checkSubscription)
+  //app.put('/subscription', stripe.updateSubscription)
   app.post('/cancel', stripe.cancelSubscription)
 
   app.get('/feed', dbr.getFollowingFeed)
