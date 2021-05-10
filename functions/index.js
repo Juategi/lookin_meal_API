@@ -168,6 +168,7 @@ else {
   app.post('/intent', stripe.createIntent)
   app.post('/customer', stripe.createCustomer)
   //app.get('/customer', stripe.getCustomer)
+  app.put('/customer', stripe.updateCustomer)
   app.post('/subscription', stripe.createSubscription)
   app.get('/subscription', stripe.checkSubscription)
   //app.put('/subscription', stripe.updateSubscription)

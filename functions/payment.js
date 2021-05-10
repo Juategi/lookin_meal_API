@@ -59,7 +59,7 @@ const getSponsored = (request, response) => {
 
 const getPremium = (request, response) => {
     const {restaurant_id} = request.headers;
-    pool.query("SELECT subscriptionId from premium where restaurant_id = $1", [restaurant_id], (error, results) => {
+    pool.query("SELECT * from premium where restaurant_id = $1", [restaurant_id], (error, results) => {
       if (error) {
         throw error
       }

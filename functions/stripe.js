@@ -17,9 +17,24 @@ async function createCustomer(request, response) {
     const payment_intent = await stripe.paymentIntents.retrieve(payment_intent_id);
     const customer = await stripe.customers.create({
         email: email,
-        payment_method:payment_intent.payment_method
+        payment_method: payment_intent.payment_method
     });
     response.status(200).json({customer: customer.id})
+}
+
+async function updateCustomer(request, response) {
+    const {customerId, payment_intent_id} = request.body;
+    const payment_intent = await stripe.paymentIntents.retrieve(payment_intent_id);
+    const paymentMethod = await stripe.paymentMethods.attach(
+        payment_intent.payment_method,
+        {customer: customerId}
+    );
+    const customer = await stripe.customers.update(
+        customerId,
+        {invoice_settings:{
+            default_payment_method: payment_intent.payment_method
+     }});
+    response.status(200).json({customer: customer})
 }
 
 async function getCustomer(request, response) {
@@ -50,7 +65,7 @@ async function createSubscription(request, response) {
     else{
         subscription = await stripe.subscriptions.create({
             customer: customerId,
-            //billing_cycle_anchor: billing_cycle_anchor,
+            trial_end : billing_cycle_anchor,
             items: [{
               price: 'price_1InoD6ASgVZXSVMBoRpkHTwk',
             }],
@@ -99,6 +114,7 @@ module.exports = {
     createSubscription,
     cancelSubscription,
     checkSubscription,
+    updateCustomer
 }
 
 
